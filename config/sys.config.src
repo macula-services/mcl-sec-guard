@@ -97,9 +97,9 @@
     {mcl_sec_guard, [
         %% The alert topic every guarded service publishes one
         %% `denials_observed' fact on per window with activity (mcl-om#13).
-        {alert_topic,   <<"denials_observed">>},
+        {alert_topic,   <<"${MCL_SEC_GUARD_ALERT_TOPIC}">>},
         %% Where proposals land, one ~0p line each.
-        {proposal_log,  "/var/lib/mcl-sec-guard/proposals.log"},
+        {proposal_log,  "${MCL_SEC_GUARD_PROPOSAL_LOG}"},
         %% The decision seam: the placeholder rule in P0, the
         %% model-backed proposer later.
         {proposer,      mcl_sec_guard_proposer_rule}

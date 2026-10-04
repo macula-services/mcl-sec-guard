@@ -1,32 +1,40 @@
 # The AI-augmented security guardian (mcl-sec-guard)
 
-This exists so that what the wardens see changes the fleet's defenses within minutes — inside
+This exists so that inbound limits across the mesh retune themselves within minutes — inside
 bounds a human set, with every change on the record.
 
-**Kind:** BUILD. **Status:** design, no code yet. **Decision (Raf, 2026-10-04):** the guardian
+**Kind:** BUILD. **Status:** P0 scaffolded (2026-10-04): the service exists — it subscribes to
+the alert topic, runs the placeholder rule behind the proposer seam, and records proposals to
+an append-only log. It applies nothing and holds no tier. **Decision (Raf, 2026-10-04):** the
+guardian
 is a new mcl-* service; its plans live here; inbound limits across the stack are hot-mutable
 for it (mcl-echo#11, mcl-om#13, macula-station#40/#41); the first sensing surface ships with
-mcl-echo#11 (`mcl_echo_limiter:stats/0`).
+mcl-echo#11 (`mcl_echo_limiter:stats/0`). **The guardian is deliberately independent of
+mcl-warden and mcl-sentinel**: those two are the host-threat commons subsystem; the guardian is
+a control-plane service with its own inputs and outputs, and nothing in its design consumes
+warden facts or sentinel campaigns.
 
-## Where it sits in the ecosystem
+## What it is
 
-- **mcl-warden** SENSES — host-level intrusion attempts on a public box become
-  `attacker_sighted` / `attacker_ensnared` facts.
-- **mcl-sentinel** CORRELATES — warden sightings become campaigns, published enriched.
-- **mcl-sec-guard** RESPONDS — this service: it reads the sightings and each service's limit
-  telemetry, and retunes the inbound limits every mesh service exposes. Today nothing acts on
-  a warden sighting beyond the warden's own decoys.
+A control-plane service that (1) READS each service's limit telemetry — `limits.get`: limits
+in effect, window fill, callers over their budget, top callers, denial counters; (2) PROPOSES
+limit changes inside a human-set envelope; (3) APPLIES them through `limits.set`, logging every
+applied change. It is AI-augmented: a model proposes; the envelope, the audit trail and the
+human tier keep it bounded.
 
 ## Sensing (inputs)
 
-1. Warden facts: `attacker_sighted`, `attacker_ensnared` — the publisher is macula-verified
-   and nothing a payload says about its own sender is believed (sentinel's rule, kept).
-2. Sentinel campaigns (second-warden correlations).
-3. Per-service limit telemetry via `limits.get`: starting with `mcl_echo_limiter:stats/0`
-   (mcl-echo#11) and the mcl-om#13 pipeline's per-stage denial counters.
-4. Station counters: call bounds, verify-charge throttles/closes (existing), payload-cap and
-   rate-limit counters once #40/#41 land.
-5. Later: enrichment (ensnare durations, usernames tried, campaign geography).
+**Alert facts, pushed to the mesh.** Every service on the mcl-om#13 pipeline (and mcl-echo
+with #11 until then) publishes an aggregated fact per window per procedure when it saw
+denials or over-limit callers — see PLAN_GUARDIAN_CONTROL_SURFACE.md for the exact contract
+(`_mesh.guard.`, fact type `denials_observed`). The guardian subscribes to that topic and
+acts — or not — on what arrives. `limits.get` remains the on-demand truth (bootstrap, and
+verification after an apply), not the driving signal.
+
+- Station counters later, once #40/#41 land: call bounds, verify-charge throttles/closes,
+  payload-cap and rate-limit counters.
+- (Open) any further signal sources are out of scope until the control loop is proven. It is
+  explicitly NOT fed from the warden/sentinel threat commons.
 
 ## Deciding (the AI part)
 
@@ -36,7 +44,7 @@ mcl-echo#11 (`mcl_echo_limiter:stats/0`).
   out-of-envelope proposal is a human-approval item — the same shape as the "ask" contact
   policy — never an autonomous apply.
 - Everything the model produces is data, never instruction: proposals go through the same
-  validation and apply path an operator's change does (`mcl_echo_limits:validate/1` today).
+  validation and apply path an operator's change does.
 
 ## Acting (actuators)
 
@@ -45,7 +53,6 @@ mcl-echo#11 (`mcl_echo_limiter:stats/0`).
   mesh capability with mcl-om#13.
 - Station limits (payload cap, per-NodeId call rate) once #40/#41 land — same pair, same
   contract (see PLAN_GUARDIAN_CONTROL_SURFACE.md).
-- Warden caps (`MCL_WARDEN_MAX_CONNS` and the ensnare thresholds), later.
 
 ## Guardrails (non-negotiable)
 
@@ -75,12 +82,11 @@ mcl-echo#11 (`mcl_echo_limiter:stats/0`).
 
 ## Phases
 
-- **P0 — shadow.** Observe (warden facts + stats), compute proposals, log them, apply nothing.
+- **P0 — shadow.** Observe (`limits.get` stats), compute proposals, log them, apply nothing.
   Needs: sensing surfaces only.
 - **P1 — tune within envelope.** Auto-apply for services on the mcl-om#13 pipeline. Needs:
   pipeline + gated `limits.set` + audit.
 - **P2 — station actuators.** Retune relay-level limits (#40/#41).
-- **P3 — campaign-driven.** Fold sentinel campaigns into proposals.
 
 ## Open questions
 
@@ -93,7 +99,9 @@ mcl-echo#11 (`mcl_echo_limiter:stats/0`).
    tier for out-of-envelope and envelope changes.
 4. **One guardian per realm — DECIDED (Raf, 2026-10-04):** one writer per realm (the
    single-writer problem); partition by service set later if the role grows, with per-service
-   tiers as the natural key. Sentinel/warden already provide redundant observation.
+   tiers as the natural key.
 5. Playbook format: declarative rules with LLM proposals on top, or LLM-only inside rule
    guardrails?
 6. `limits.get` is public facts — keep it `open`, gate only `limits.set`?
+7. Signal sources beyond limit telemetry and station counters — deliberately deferred until
+   the control loop is proven, and deliberately NOT warden/sentinel.

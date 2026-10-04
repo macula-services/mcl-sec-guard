@@ -7,6 +7,27 @@ one gated, audited, self-describing interface — and so no service invents a se
 (`mcl_echo_limits:get/0,set/1`, `mcl_echo_limiter:set_limits/1,stats/0`); the mesh half rides on
 the mcl-om#13 pipeline. **Decision (Raf, 2026-10-04):** one control surface, not three.
 
+## The alert facts (services → guardian)
+
+Sensing is push, not poll: a guarded service reports what it observed; the guardian
+subscribes and decides. `limits.get` stays for bootstrap and post-apply verification.
+
+- **Topic:** `denials_observed` — one well-known fact topic per realm (configurable per
+  service via `{mcl_om, inbound_guard, #{alert_topic => ...}}`); the guardian subscribes to
+  it.
+- **Fact type:** `denials_observed` (business verb: the service reports an observation, the
+  guardian acts or not).
+- **Payload** (binaries and numbers only, no booleans):
+
+  `#{procedure, window_start_ms, denied_rate, denied_size, callers_over_limit, global_count,
+     global_max, per_caller_max}`
+
+- **Cadence:** once per window per procedure, and only when that window saw a denial or an
+  over-limit caller — an attacker cannot use a quiet service as a fact amplifier, and a
+  flood of denials collapses into one fact per window.
+- The guardian subscribes through mcl-om's pubsub machinery; a fact says nothing about its
+  own sender that the subscriber does not already verify from the transport.
+
 ## The pair
 
 Every service (pipeline or hand-rolled) exposes, in its org namespace:

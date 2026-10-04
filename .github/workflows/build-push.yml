@@ -1,0 +1,171 @@
+# Build the OCI image for mcl-sec-guard and push to the registry.
+#
+# TWO CHANNELS, AND A TAG PUSH MUST NOT TOUCH THE DEPLOY ONE.
+#
+#   push to main : publishes :latest        <- the deploy channel
+#   push of v*   : publishes :<semver> ONLY <- the rollback archive
+#
+# The deployed compose tracks :latest under watchtower for zero-touch deploys,
+# and the semver tags stay published so a bad release can be pinned back to a
+# known one. A tag that also moved :latest would roll every box the moment a
+# release was cut, so cutting a release and deploying one are separate acts.
+#
+# NO PATH FILTER, ON PURPOSE. A docs-only push should not rebuild :latest and
+# restart every box, but `paths-ignore' cannot be trusted with that: on the push
+# that CREATES a branch GitHub evaluates it on the head commit alone, so a first
+# push ending in a README edit silently built no image. scripts/is_image_push.sh
+# decides from the pushed range instead, and builds whenever it cannot tell.
+# If an image is ever missing anyway, run this workflow by hand.
+#
+# NOTE ON PUSHING THIS FILE. An HTTPS push that creates or updates anything under
+# .github/workflows/ needs a token carrying the `workflow' scope, and the error
+# names the FILE rather than the missing scope. Use an SSH remote and the problem
+# does not arise.
+
+name: build-and-push
+
+on:
+  push:
+    branches: [main]
+    tags:     ['v*']
+  workflow_dispatch:
+
+# ONE IMAGE BUILD IN FLIGHT PER REF. Every push to main builds and pushes
+# :latest; without this, three quick commits run three builds that finish in
+# whatever order the runners please, and :latest ends up being whichever
+# finished LAST, not whichever was pushed last -- watchtower then rolls the
+# fleet onto an older commit and flaps. A sibling service hit exactly that live.
+concurrency:
+  group: build-and-push-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    runs-on: ["ubuntu-latest"]
+    permissions:
+      contents: read
+      packages: write
+    # The digest the push produced: the one the attest job signs.
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+
+    steps:
+      # The whole history, so the gate below can diff the pushed range.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Does this push need an image?
+        id: gate
+        run: scripts/is_image_push.sh "${{ github.event.before }}" "${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      # PLAIN `docker' CLI STEPS, NO docker/* ACTIONS, so the job runs on a
+      # GitHub-hosted runner (docker) and on a runner whose `docker' is
+      # a shim for podman alike. docker/build-push-action needs Docker's buildx,
+      # which podman is not.
+      #
+      # THE LOGIN GOES TO THIS JOB'S OWN FILES, DOCKER_CONFIG for docker and
+      # REGISTRY_AUTH_FILE for podman, both under $RUNNER_TEMP. Runners on one
+      # box can share one podman and its default auth file, and a token written
+      # there is readable by, and overwritten by, the other runners' jobs.
+      - name: Log in to the registry
+        if: steps.gate.outputs.build == 'true'
+        id: login
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker-config" >> "$GITHUB_ENV"
+          echo "REGISTRY_AUTH_FILE=$RUNNER_TEMP/auth.json" >> "$GITHUB_ENV"
+          export DOCKER_CONFIG="$RUNNER_TEMP/docker-config" REGISTRY_AUTH_FILE="$RUNNER_TEMP/auth.json"
+          echo "$TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      # Emits the COMPLETE tag list, so the condition governs all of it. ONLY
+      # MAIN FEEDS :latest AND ONLY A v* TAG FEEDS THE ARCHIVE: the workflow can
+      # be run by hand from any branch, and a branch build must never overwrite
+      # the deploy channel, so any other ref is refused, naming it.
+      - name: Set tags
+        if: steps.gate.outputs.build == 'true'
+        id: tag
+        run: |
+          case "${GITHUB_REF}" in
+            refs/tags/v*)    echo "tags=ghcr.io/macula-services/mcl-sec-guard:${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT" ;;
+            refs/heads/main) echo "tags=ghcr.io/macula-services/mcl-sec-guard:latest" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::only main publishes :latest and only a v* tag publishes a version; refusing $GITHUB_REF"; exit 1 ;;
+          esac
+
+      # BUILT UNDER A TAG UNIQUE TO THIS RUN, then tagged for the registry and
+      # pushed. A shared image store sees every runner's builds, and the run id
+      # keeps two of them from racing on one local name. REVISION is the commit
+      # the image was built from, readable from the image itself.
+      #
+      # BUILDAH_FORMAT: podman builds OCI by default, and OCI has no
+      # HEALTHCHECK, so the image would silently lose the one the Containerfile
+      # declares. docker ignores the variable.
+      - name: Build and push
+        if: steps.gate.outputs.build == 'true'
+        id: build
+        env:
+          BUILDAH_FORMAT: docker
+          LOCAL: mcl-sec-guard:ci-${{ github.run_id }}-${{ github.run_attempt }}
+          TAGS: ${{ steps.tag.outputs.tags }}
+        run: |
+          docker build --file Containerfile --build-arg REVISION=${{ github.sha }} --tag "$LOCAL" .
+          for tag in $TAGS; do
+              docker tag "$LOCAL" "$tag"
+              docker push "$tag"
+          done
+
+      # THE DIGEST THE PUSH PRODUCED, read back from the registry by the tag
+      # just pushed: the steps above are plain docker CLI (they must run on a
+      # podman shim too), so no action reports it. The concurrency group keeps
+      # another build of this ref from moving the tag in between.
+      - name: Resolve the pushed digest
+        if: steps.gate.outputs.build == 'true'
+        id: digest
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAGS: ${{ steps.tag.outputs.tags }}
+        run: |
+          tag="${TAGS%% *}"
+          digest=$(curl -fsSI -H "Authorization: Bearer $(printf %s "$TOKEN" | base64 -w0)" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json" \
+              "https://ghcr.io/v2/macula-services/mcl-sec-guard/manifests/${tag##*:}" \
+            | tr -d '\r' | sed -n 's/^[Dd]ocker-[Cc]ontent-[Dd]igest: //p')
+          case "$digest" in
+            sha256:*) echo "digest=$digest" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::the registry named no digest for $tag"; exit 1 ;;
+          esac
+
+      # BY NAME, NEVER BY WILDCARD: on a shared image store, a wildcard removal
+      # takes other jobs' images mid-run. Keyed on the LOGIN, so the credentials go
+      # even when a step between login and build failed; an image that was
+      # never built is skipped. A red job here after a green push means the
+      # image is published and only this cleanup failed.
+      - name: Remove this run's images and credentials
+        if: always() && steps.login.outcome != 'skipped'
+        env:
+          LOCAL: mcl-sec-guard:ci-${{ github.run_id }}-${{ github.run_attempt }}
+          TAGS: ${{ steps.tag.outputs.tags }}
+        run: |
+          for image in "$LOCAL" $TAGS; do
+              if docker image inspect "$image" >/dev/null 2>&1; then docker rmi "$image"; fi
+          done
+          rm -rf "$RUNNER_TEMP/docker-config" "$RUNNER_TEMP/auth.json"
+
+  # SIGNED BY DIGEST, SBOM AND PROVENANCE ATTESTED, keyless, so a box can refuse any
+  # digest of this image that did not come from this workflow on a commit of this
+  # repository (macula-fleet's reconciler checks it before it runs the image). Pinned
+  # by full commit sha: the signing identity is that file at that ref. Runs on the
+  # build's own runner. See macula-ci-images' README.
+  attest:
+    needs: build-and-push
+    if: needs.build-and-push.outputs.digest != ''
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: macula-io/macula-ci-images/.github/workflows/attest-image.yml@b304162c9b46b366f93af362d3a76f17ae01794f
+    with:
+      image: ghcr.io/macula-services/mcl-sec-guard
+      digest: ${{ needs.build-and-push.outputs.digest }}
+      runs-on: '["ubuntu-latest"]'

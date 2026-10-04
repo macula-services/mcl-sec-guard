@@ -61,9 +61,23 @@ a_size_denied_window_proposes_the_floor_test() ->
     ?assertEqual(#{per_caller_max => 1}, maps:get(proposed, Proposal)),
     ?assertEqual(unknown, maps:get(envelope, Proposal)).
 
+%% The enriched fact (mcl-om 0.37.4) carries the window's top callers:
+%% the proposal must name the offenders, not just propose a blind
+%% floor. Before this test the rule ignored them entirely.
+a_window_with_offenders_names_them_in_the_proposal_test() ->
+    Wire = wire_fact(#{denied_rate => 5, callers_over_limit => 2,
+                       denied_size => 0,
+                       top_callers => [#{{text, <<"caller">>} => <<"00ff">>,
+                                         {text, <<"count">>} => 9},
+                                       #{{text, <<"caller">>} => <<"ab">>,
+                                         {text, <<"count">>} => 4}]}),
+    Proposal = mcl_sec_guard_proposer_rule:propose(Wire),
+    ?assertEqual([<<"00ff">>, <<"ab">>], maps:get(callers, Proposal)),
+    ?assertEqual(#{per_caller_max => 2}, maps:get(proposed, Proposal)).
+
 %% The exact shape a subscriber receives for one mcl-om alert fact.
 wire_fact(#{denied_rate := Rate, callers_over_limit := Over,
-            denied_size := Sized}) ->
+            denied_size := Sized, top_callers := Top}) ->
     #{{text, <<"procedure">>} => <<"mcl-echo/echo">>,
       {text, <<"window_start_ms">>} => 1791148830000,
       {text, <<"denied_rate">>} => Rate,
@@ -71,7 +85,13 @@ wire_fact(#{denied_rate := Rate, callers_over_limit := Over,
       {text, <<"callers_over_limit">>} => Over,
       {text, <<"global_count">>} => 0,
       {text, <<"global_max">>} => 300,
-      {text, <<"per_caller_max">>} => 20};
+      {text, <<"per_caller_max">>} => 20,
+      {text, <<"distinct_callers">>} => length(Top),
+      {text, <<"top_callers">>} => Top};
+wire_fact(#{denied_rate := Rate, callers_over_limit := Over,
+            denied_size := Sized}) ->
+    wire_fact(#{denied_rate => Rate, callers_over_limit => Over,
+                denied_size => Sized, top_callers => []});
 wire_fact(#{denied_rate := Rate, callers_over_limit := Over}) ->
     wire_fact(#{denied_rate => Rate, callers_over_limit => Over,
                 denied_size => 0}).

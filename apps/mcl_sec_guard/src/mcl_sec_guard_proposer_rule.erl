@@ -18,13 +18,19 @@ propose(Fact) when is_map(Fact) ->
     case {field(Fact, <<"procedure">>),
           field(Fact, <<"callers_over_limit">>),
           field(Fact, <<"denied_rate">>),
-          field(Fact, <<"denied_size">>)} of
-        {Proc, Over, Denied, Sized}
+          field(Fact, <<"denied_size">>),
+          field(Fact, <<"top_callers">>)} of
+        {Proc, Over, Denied, Sized, TopCallers}
           when is_binary(Proc), is_integer(Over), is_integer(Denied),
                is_integer(Sized),
                (Over > 0 orelse Denied > 0 orelse Sized > 0) ->
             #{procedure => Proc,
               proposed => #{per_caller_max => max(Over, 1)},
+              %% The enriched fact (mcl-om 0.37.4) names the window's
+              %% top callers; the proposal carries their hex ids so a
+              %% reviewer (and P1) sees WHO was flooding, not just that
+              %% a window went hot.
+              callers => caller_ids(TopCallers),
               reason =>
                   <<"placeholder rule: window saw denials; propose per_caller_max "
                     "at the over-limit count">>,
@@ -39,6 +45,12 @@ propose(Fact) when is_map(Fact) ->
     end;
 propose(_Fact) ->
     none.
+
+caller_ids(TopCallers) when is_list(TopCallers) ->
+    [Caller || Entry <- TopCallers, is_map(Entry),
+               (Caller = field(Entry, <<"caller">>)) =/= undefined];
+caller_ids(_) ->
+    [].
 
 %% A field, read whatever key form it arrived in: the binary key (the
 %% subscriber normalizes to it), the atom key (direct calls), or the

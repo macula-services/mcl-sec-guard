@@ -2,12 +2,12 @@
 An intelligent security guard service
 
 Design and plans live in [`plans/`](plans/): the guardian architecture and the
-control surface (`limits.get` / `limits.set`) it actuates.
+control surface (`get_limits` / `set_limits`) it actuates.
 
 ## P0 shadow (current)
 
 The service observes, proposes and records — it applies nothing. No guardian
-tier, no `limits.set` anywhere in its namespace; the worst a compromised P0
+tier, no `set_limits` anywhere in its namespace; the worst a compromised P0
 guardian can do is write a bad proposal into its own log.
 
 - **Sense:** subscribes to `denials_observed` (the alert facts guarded

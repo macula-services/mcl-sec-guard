@@ -16,11 +16,11 @@ warden facts or sentinel campaigns.
 
 ## What it is
 
-A control-plane service that (1) READS each service's limit telemetry — `limits.get`: limits
+A control-plane service that (1) READS each service's limit telemetry — `get_limits`: limits
 in effect, window fill, callers over their budget, top callers, denial counters; (2) PROPOSES
-limit changes inside a human-set envelope; (3) APPLIES them through `limits.set`, logging every
+limit changes inside a human-set envelope; (3) APPLIES them through `set_limits`, logging every
 applied change. It is AI-augmented: a model proposes; the envelope, the audit trail and the
-human tier keep it bounded.
+the envelope, the audit trail and the admin UI keep it bounded.
 
 ## Sensing (inputs)
 
@@ -28,7 +28,7 @@ human tier keep it bounded.
 with #11 until then) publishes an aggregated fact per window per procedure when it saw
 denials or over-limit callers — see PLAN_GUARDIAN_CONTROL_SURFACE.md for the exact contract
 (`_mesh.guard.`, fact type `denials_observed`). The guardian subscribes to that topic and
-acts — or not — on what arrives. `limits.get` remains the on-demand truth (bootstrap, and
+acts — or not — on what arrives. `get_limits` remains the on-demand truth (bootstrap, and
 verification after an apply), not the driving signal.
 
 - Station counters later, once #40/#41 land: call bounds, verify-charge throttles/closes,
@@ -48,7 +48,7 @@ verification after an apply), not the driving signal.
 
 ## Acting (actuators)
 
-- `<org>/limits.set` on every service shipping the mcl-om#13 pipeline (guard + stats + gated
+- `<org>/set_limits` on every service shipping the mcl-om#13 pipeline (guard + stats + gated
   control surface). mcl-echo is the first actuator: local API now (mcl-echo#11), the gated
   mesh capability with mcl-om#13.
 - Station limits (payload cap, per-NodeId call rate) once #40/#41 land — same pair, same
@@ -82,26 +82,27 @@ verification after an apply), not the driving signal.
 
 ## Phases
 
-- **P0 — shadow.** Observe (`limits.get` stats), compute proposals, log them, apply nothing.
+- **P0 — shadow.** Observe (`get_limits` stats), compute proposals, log them, apply nothing.
   Needs: sensing surfaces only.
 - **P1 — tune within envelope.** Auto-apply for services on the mcl-om#13 pipeline. Needs:
-  pipeline + gated `limits.set` + audit.
+  pipeline + gated `set_limits` + audit.
 - **P2 — station actuators.** Retune relay-level limits (#40/#41).
 
 ## Open questions
 
 1. Store from day one, or an append-only audit file until P1?
 2. **Envelope policy — DECIDED (Raf, 2026-10-04):** hard server-side clamps. The guardian tier may
-   only set within the per-parameter envelope; a human tier may set beyond it, and every such
-   change is audited.
+   only set within the per-parameter envelope; humans change limits and the envelope through
+   deploy config and the service's admin UI — there is no operator mesh capability, and every
+   human change is audited.
 3. **Tier naming — DECIDED (Raf, 2026-10-04):** one realm-wide actuator tier `guardian`
-   (plain lowercase, wire-safe), held by exactly one guardian identity; a separate `operator`
-   tier for out-of-envelope and envelope changes.
+   (plain lowercase, wire-safe), held by exactly one guardian identity. No operator tier:
+   humans use deploy config and the service's admin UI.
 4. **One guardian per realm — DECIDED (Raf, 2026-10-04):** one writer per realm (the
    single-writer problem); partition by service set later if the role grows, with per-service
    tiers as the natural key.
 5. Playbook format: declarative rules with LLM proposals on top, or LLM-only inside rule
    guardrails?
-6. `limits.get` is public facts — keep it `open`, gate only `limits.set`?
+6. `get_limits` is public facts — keep it `open`, gate only `set_limits`?
 7. Signal sources beyond limit telemetry and station counters — deliberately deferred until
    the control loop is proven, and deliberately NOT warden/sentinel.

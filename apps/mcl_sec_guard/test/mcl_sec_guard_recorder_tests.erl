@@ -13,16 +13,27 @@ setup() ->
     Path = "/tmp/mcl_sec_guard_proposals_test.log",
     _ = file:delete(Path),
     application:set_env(mcl_sec_guard, proposal_log, Path),
-    {ok, Pid} = mcl_sec_guard_recorder:start_link(),
-    Pid.
+    start_recorder().
 
-teardown(Pid) ->
+teardown({Pid, Keeper}) ->
+    Keeper ! stop,
     Ref = erlang:monitor(process, Pid),
-    unlink(Pid),
     exit(Pid, shutdown),
     receive {'DOWN', Ref, process, Pid, _Reason} -> ok end,
     application:unset_env(mcl_sec_guard, proposal_log),
     _ = file:delete("/tmp/mcl_sec_guard_proposals_test.log").
+
+%% The recorder starts under a keeper, not the eunit setup process:
+%% eunit exits its setup process once the fixture is built, and a
+%% start_link'd child dies with it, mid-fixture.
+start_recorder() ->
+    Parent = self(),
+    Keeper = spawn(fun() ->
+                           {ok, Pid} = mcl_sec_guard_recorder:start_link(),
+                           Parent ! {recorder_started, self(), Pid},
+                           receive stop -> ok end
+                   end),
+    receive {recorder_started, Keeper, Pid} -> {Pid, Keeper} end.
 
 a_proposal_appends_one_line() ->
     Proposal = #{procedure => <<"mcl-echo/echo">>,

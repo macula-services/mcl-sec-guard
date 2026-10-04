@@ -1,0 +1,38 @@
+%%% @doc Tests for the append-only proposal recorder: one line per
+%%% proposal, against a real file.
+-module(mcl_sec_guard_recorder_tests).
+
+-include_lib("eunit/include/eunit.hrl").
+
+recorder_test_() ->
+    {setup, fun setup/0, fun teardown/1, fun(_Pid) ->
+        [fun a_proposal_appends_one_line/0]
+    end}.
+
+setup() ->
+    Path = "/tmp/opencode/mcl_sec_guard_proposals_test.log",
+    _ = file:delete(Path),
+    application:set_env(mcl_sec_guard, proposal_log, Path),
+    {ok, Pid} = mcl_sec_guard_recorder:start_link(),
+    Pid.
+
+teardown(Pid) ->
+    Ref = erlang:monitor(process, Pid),
+    unlink(Pid),
+    exit(Pid, shutdown),
+    receive {'DOWN', Ref, process, Pid, _Reason} -> ok end,
+    application:unset_env(mcl_sec_guard, proposal_log),
+    _ = file:delete("/tmp/opencode/mcl_sec_guard_proposals_test.log").
+
+a_proposal_appends_one_line() ->
+    Proposal = #{procedure => <<"mcl-echo/echo">>,
+                 proposed => #{per_caller_max => 3},
+                 reason => <<"test">>,
+                 envelope => unknown,
+                 decided_at_ms => 1},
+    ok = mcl_sec_guard_recorder:record(Proposal),
+    ok = mcl_sec_guard_recorder:record(Proposal),
+    {ok, Bin} = file:read_file("/tmp/opencode/mcl_sec_guard_proposals_test.log"),
+    Lines = [Line || Line <- binary:split(Bin, <<"\n">>, [global]), Line =/= <<>>],
+    ?assertEqual(2, length(Lines)),
+    ?assertMatch(<<"#{", _/binary>>, hd(Lines)).

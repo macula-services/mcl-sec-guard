@@ -1,0 +1,48 @@
+# Structural lint, unit tests and dialyzer, in the SAME digest-pinned image
+# the Containerfile's builder stage uses, so CI tests the toolchain that
+# ships: OTP 28.4.3 with ML-DSA, rebar3, Rust (macula's NIFs always build
+# from source) and a C toolchain, all from the image, none installed here.
+
+name: lint-and-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ["ubuntu-latest"]
+    container:
+      # ⚠ THE SAME IMAGE AS THE Containerfile's builder, by digest. The service
+      # tests guard that the two agree and that the step below refuses
+      # anything but 28.4.3.
+      image: ghcr.io/macula-io/macula-ci-otp:20260928-1800@sha256:7318a443021f8a4ceb7ad56b0ab21f52db95db92996ea0f0897a1eff0b678832
+    steps:
+      # BEFORE checkout, so an image missing git (checkout would fall back to
+      # the REST API, with no real clone and no tags) or any other tool the
+      # build needs fails here, naming it, rather than a later step failing
+      # on its absence. mcl_om's template suite runs the block between the
+      # markers in this image (scripts/is_lint_toolchain_runnable.sh).
+      - name: Verify the toolchain is the one we think it is
+        run: |
+          # toolchain-begin
+          git --version
+          openssl version
+          rebar3 version
+          rustc --version
+          cargo --version
+          erl -noshell -eval '
+            Otp = string:trim(element(2, file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])))),
+            Mldsa = lists:member(mldsa87, crypto:supports(public_keys)),
+            io:format("OTP ~s, mldsa87 ~p~n", [Otp, Mldsa]),
+            case {Otp, Mldsa} of
+                {<<"28.4.3">>, true} -> halt(0);
+                _                    -> halt(1)
+            end.'
+          # toolchain-end
+      - uses: actions/checkout@v4
+      - run: rebar3 lint
+      - run: rebar3 eunit
+      - run: rebar3 dialyzer

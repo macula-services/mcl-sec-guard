@@ -85,7 +85,15 @@ mcl-echo#11 (`mcl_echo_limiter:stats/0`).
 ## Open questions
 
 1. Store from day one, or an append-only audit file until P1?
-2. Guardian tier name and membership: who mints it, one guardian or several per realm?
-3. Playbook format: declarative rules with LLM proposals on top, or LLM-only inside rule
+2. **Envelope policy — DECIDED (Raf, 2026-10-04):** hard server-side clamps. The guardian tier may
+   only set within the per-parameter envelope; a human tier may set beyond it, and every such
+   change is audited.
+3. **Tier naming — DECIDED (Raf, 2026-10-04):** one realm-wide actuator tier `guardian`
+   (plain lowercase, wire-safe), held by exactly one guardian identity; a separate `operator`
+   tier for out-of-envelope and envelope changes.
+4. **One guardian per realm — DECIDED (Raf, 2026-10-04):** one writer per realm (the
+   single-writer problem); partition by service set later if the role grows, with per-service
+   tiers as the natural key. Sentinel/warden already provide redundant observation.
+5. Playbook format: declarative rules with LLM proposals on top, or LLM-only inside rule
    guardrails?
-4. `limits.get` is public facts — keep it `open`, gate only `limits.set`?
+6. `limits.get` is public facts — keep it `open`, gate only `limits.set`?

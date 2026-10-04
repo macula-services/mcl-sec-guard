@@ -93,7 +93,7 @@ authority_matches_what_is_announced_test() ->
 %% with exactly that child and no phantom work.
 supervisor_starts_and_stops_test() ->
     application:set_env(mcl_sec_guard, proposal_log,
-                        "/tmp/opencode/mcl_sec_guard_sup_test.log"),
+                        "/tmp/mcl_sec_guard_sup_test.log"),
     {ok, Pid} = mcl_sec_guard_sup:start_link(),
     ?assert(is_process_alive(Pid)),
     ?assertMatch([{mcl_sec_guard_recorder, _, worker, _}],

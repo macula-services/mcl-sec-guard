@@ -10,7 +10,7 @@ recorder_test_() ->
     end}.
 
 setup() ->
-    Path = "/tmp/opencode/mcl_sec_guard_proposals_test.log",
+    Path = "/tmp/mcl_sec_guard_proposals_test.log",
     _ = file:delete(Path),
     application:set_env(mcl_sec_guard, proposal_log, Path),
     {ok, Pid} = mcl_sec_guard_recorder:start_link(),
@@ -22,7 +22,7 @@ teardown(Pid) ->
     exit(Pid, shutdown),
     receive {'DOWN', Ref, process, Pid, _Reason} -> ok end,
     application:unset_env(mcl_sec_guard, proposal_log),
-    _ = file:delete("/tmp/opencode/mcl_sec_guard_proposals_test.log").
+    _ = file:delete("/tmp/mcl_sec_guard_proposals_test.log").
 
 a_proposal_appends_one_line() ->
     Proposal = #{procedure => <<"mcl-echo/echo">>,
@@ -32,7 +32,7 @@ a_proposal_appends_one_line() ->
                  decided_at_ms => 1},
     ok = mcl_sec_guard_recorder:record(Proposal),
     ok = mcl_sec_guard_recorder:record(Proposal),
-    {ok, Bin} = file:read_file("/tmp/opencode/mcl_sec_guard_proposals_test.log"),
+    {ok, Bin} = file:read_file("/tmp/mcl_sec_guard_proposals_test.log"),
     Lines = [Line || Line <- binary:split(Bin, <<"\n">>, [global]), Line =/= <<>>],
     ?assertEqual(2, length(Lines)),
     ?assertMatch(<<"#{", _/binary>>, hd(Lines)).

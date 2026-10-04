@@ -48,13 +48,30 @@ a_quiet_wire_form_window_proposes_nothing_test() ->
     Wire = wire_fact(#{denied_rate => 0, callers_over_limit => 0}),
     ?assertEqual(none, mcl_sec_guard_proposer_rule:propose(Wire)).
 
+%% Oversized payloads are a typical tactic — the original DoS probe
+%% laddered payloads to 8 MiB. A window that saw size denials must
+%% trigger the rule exactly like a rate-denied one; before this test
+%% the rule watched only rate and over-limit, and a size flood was
+%% invisible to the guardian.
+a_size_denied_window_proposes_the_floor_test() ->
+    Wire = wire_fact(#{denied_rate => 0, callers_over_limit => 0,
+                       denied_size => 4}),
+    Proposal = mcl_sec_guard_proposer_rule:propose(Wire),
+    ?assertEqual(<<"mcl-echo/echo">>, maps:get(procedure, Proposal)),
+    ?assertEqual(#{per_caller_max => 1}, maps:get(proposed, Proposal)),
+    ?assertEqual(unknown, maps:get(envelope, Proposal)).
+
 %% The exact shape a subscriber receives for one mcl-om alert fact.
-wire_fact(#{denied_rate := Rate, callers_over_limit := Over}) ->
+wire_fact(#{denied_rate := Rate, callers_over_limit := Over,
+            denied_size := Sized}) ->
     #{{text, <<"procedure">>} => <<"mcl-echo/echo">>,
       {text, <<"window_start_ms">>} => 1791148830000,
       {text, <<"denied_rate">>} => Rate,
-      {text, <<"denied_size">>} => 0,
+      {text, <<"denied_size">>} => Sized,
       {text, <<"callers_over_limit">>} => Over,
       {text, <<"global_count">>} => 0,
       {text, <<"global_max">>} => 300,
-      {text, <<"per_caller_max">>} => 20}.
+      {text, <<"per_caller_max">>} => 20};
+wire_fact(#{denied_rate := Rate, callers_over_limit := Over}) ->
+    wire_fact(#{denied_rate => Rate, callers_over_limit => Over,
+                denied_size => 0}).

@@ -16,6 +16,10 @@ quiet_wire_form_fact_test_() ->
     log_fixture("/tmp/mcl_sec_guard_subscriber_quiet_test.log",
                 [fun a_quiet_wire_form_fact_records_nothing/0]).
 
+provenance_test_() ->
+    log_fixture("/tmp/mcl_sec_guard_subscriber_provenance_test.log",
+                [fun a_recorded_proposal_carries_its_publisher/0]).
+
 log_fixture(Path, Tests) ->
     {setup, fun() -> setup(Path) end, fun teardown/1, fun(_Pid) -> Tests end}.
 
@@ -97,3 +101,25 @@ a_quiet_wire_form_fact_records_nothing() ->
     {ok, Bin} = file:read_file("/tmp/mcl_sec_guard_subscriber_quiet_test.log"),
     Lines = [Line || Line <- binary:split(Bin, <<"\n">>, [global]), Line =/= <<>>],
     ?assertEqual([], Lines).
+
+%% The delivery metadata names the verified publisher — which node's
+%% pipeline reported the window, when, and its sequence. P0 drops it
+%% today, so a reviewer cannot tell who the fact came from; the mesh
+%% only delivers verified publications, so this identity rides the
+%% signature. Node ids are arbitrary bytes: hex-encode for the wire.
+a_recorded_proposal_carries_its_publisher() ->
+    Wire = wire_fact(#{denied_rate => 5, callers_over_limit => 2}),
+    Meta = #{publisher => <<0:256>>,
+             published_at => 1791156000000,
+             seq => 7},
+    {noreply, #{}} = mcl_sec_guard_subscriber:handle_event(
+                        <<"denials_observed">>, Wire, Meta, #{}),
+    {ok, Bin} = file:read_file("/tmp/mcl_sec_guard_subscriber_provenance_test.log"),
+    Lines = [Line || Line <- binary:split(Bin, <<"\n">>, [global]), Line =/= <<>>],
+    ?assertEqual(1, length(Lines)),
+    {ok, Tokens, _} = erl_scan:string(binary_to_list(hd(Lines))),
+    {ok, Term} = erl_parse:parse_term(Tokens),
+    ?assertEqual(<<"0000000000000000000000000000000000000000000000000000000000000000">>,
+                 maps:get(publisher, Term)),
+    ?assertEqual(1791156000000, maps:get(published_at_ms, Term)),
+    ?assertEqual(7, maps:get(seq, Term)).

@@ -14,15 +14,40 @@
 
 -export([propose/1]).
 
-propose(#{procedure := Proc, callers_over_limit := Over, denied_rate := Denied})
-  when is_binary(Proc), is_integer(Over), is_integer(Denied),
-       (Over > 0 orelse Denied > 0) ->
-    #{procedure => Proc,
-      proposed => #{per_caller_max => max(Over, 1)},
-      reason =>
-          <<"placeholder rule: window saw denials; propose per_caller_max "
-            "at the over-limit count">>,
-      envelope => unknown,
-      decided_at_ms => erlang:monotonic_time(millisecond)};
+propose(Fact) when is_map(Fact) ->
+    case {field(Fact, <<"procedure">>),
+          field(Fact, <<"callers_over_limit">>),
+          field(Fact, <<"denied_rate">>)} of
+        {Proc, Over, Denied}
+          when is_binary(Proc), is_integer(Over), is_integer(Denied),
+               (Over > 0 orelse Denied > 0) ->
+            #{procedure => Proc,
+              proposed => #{per_caller_max => max(Over, 1)},
+              reason =>
+                  <<"placeholder rule: window saw denials; propose per_caller_max "
+                    "at the over-limit count">>,
+              envelope => unknown,
+              decided_at_ms => erlang:monotonic_time(millisecond)};
+        _ ->
+            none
+    end;
 propose(_Fact) ->
     none.
+
+%% A field, read whatever key form it arrived in: the binary key (the
+%% subscriber normalizes to it), the atom key (direct calls), or the
+%% wire form's {text, Name}. The rule matched atoms only, and the mesh
+%% delivers wire form — every fact fell through to none (mcl-sec-guard#2).
+field(Fact, Name) ->
+    Atom = try binary_to_existing_atom(Name, utf8)
+           catch error:badarg -> nope
+           end,
+    first_present([Name, Atom, {text, Name}], Fact).
+
+first_present([], _Fact) ->
+    undefined;
+first_present([Key | Rest], Fact) ->
+    case maps:find(Key, Fact) of
+        {ok, Value} -> Value;
+        error -> first_present(Rest, Fact)
+    end.

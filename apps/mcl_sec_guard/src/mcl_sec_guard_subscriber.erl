@@ -23,6 +23,12 @@ handle_event(_Topic, Payload, _Meta, State) ->
     {noreply, State}.
 
 %% A fact may arrive wrapped in `#{value := V}' (the SDK's example
-%% shape) or as the raw payload; accept both, refuse neither.
-fact_of(#{value := Value}) -> Value;
-fact_of(Fact) -> Fact.
+%% shape) or as the raw payload; accept both, refuse neither. Either
+%% way the payload is in WIRE FORM (macula_frame:to_wire/1): map keys
+%% are {text, K} tuples, atom values are {text, V}, undefined is null.
+%% Normalize to the decoded shape — binary keys, plain values — before
+%% the proposer sees it: matching atom keys on the wire form silently
+%% discarded every fact live (mcl-sec-guard#2). macula 13.5.0 carries
+%% macula_record:decode_payload/1 for exactly this (macula-io/macula#61).
+fact_of(#{value := Value}) -> macula_record:decode_payload(Value);
+fact_of(Fact) -> macula_record:decode_payload(Fact).

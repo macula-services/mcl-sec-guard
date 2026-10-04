@@ -25,8 +25,4 @@ commands run from the repo directory use the pinned VM via the asdf shims:
 
     rebar3 compile
     rebar3 eunit
-
-**The inbound guard is not released yet:** `_checkouts/mcl_om` is a symlink
-to the mcl-om checkout on the guard-pipeline branch (git-ignored, created
-manually), so `denials_observed` facts actually exist. Point it at released
-`~> 0.37` when the pipeline ships, and drop the symlink.
+    rebar3 lint

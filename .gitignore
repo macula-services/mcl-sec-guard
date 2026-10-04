@@ -11,5 +11,3 @@ erl_crash.dump
 proposals.log
 *.log
 
-# local checkout pins (see README): the unreleased mcl-om pipeline and the SDK
-_checkouts/

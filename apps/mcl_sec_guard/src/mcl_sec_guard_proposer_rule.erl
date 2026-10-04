@@ -27,7 +27,11 @@ propose(Fact) when is_map(Fact) ->
                   <<"placeholder rule: window saw denials; propose per_caller_max "
                     "at the over-limit count">>,
               envelope => unknown,
-              decided_at_ms => erlang:monotonic_time(millisecond)};
+              %% WALL CLOCK, deliberately: OTP 28's monotonic_time is
+              %% signed — negative — and the wire codec refuses negative
+              %% integers (mcl_om's window starts use system_time for the
+              %% same reason). A proposal must stay sendable for P1.
+              decided_at_ms => erlang:system_time(millisecond)};
         _ ->
             none
     end;

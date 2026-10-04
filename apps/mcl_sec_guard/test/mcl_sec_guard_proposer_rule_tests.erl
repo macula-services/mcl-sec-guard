@@ -13,7 +13,10 @@ an_active_window_produces_one_timid_proposal_test() ->
     ?assertEqual(#{per_caller_max => 3}, maps:get(proposed, Proposal)),
     ?assertEqual(unknown, maps:get(envelope, Proposal)),
     ?assert(is_binary(maps:get(reason, Proposal))),
-    ?assert(is_integer(maps:get(decided_at_ms, Proposal))).
+    %% OTP 28's monotonic_time is NEGATIVE, and the wire codec refuses
+    %% negative integers: decided_at_ms rides system_time wall clock,
+    %% like mcl_om's window starts. A proposal must stay sendable.
+    ?assert(maps:get(decided_at_ms, Proposal) >= 0).
 
 a_quiet_window_proposes_nothing_test() ->
     Quiet = #{procedure => <<"mcl-echo/echo">>, window_start_ms => 1000,

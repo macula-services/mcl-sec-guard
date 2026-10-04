@@ -20,7 +20,7 @@ handle_event(_Topic, Payload, _Meta, State) ->
         none -> ok;
         Proposal -> ok = mcl_sec_guard_recorder:record(Proposal)
     end,
-    {ok, State}.
+    {noreply, State}.
 
 %% A fact may arrive wrapped in `#{value := V}' (the SDK's example
 %% shape) or as the raw payload; accept both, refuse neither.

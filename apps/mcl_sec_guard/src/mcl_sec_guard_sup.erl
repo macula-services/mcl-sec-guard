@@ -18,6 +18,11 @@ init([]) ->
           start => {mcl_sec_guard_recorder, start_link, []},
           restart => permanent,
           shutdown => 5000,
+          type => worker},
+        #{id => mcl_sec_guard_admin,
+          start => {mcl_sec_guard_admin, start_link, []},
+          restart => permanent,
+          shutdown => 5000,
           type => worker}
     ],
     {ok, {#{strategy => one_for_one, intensity => 5, period => 10}, Children}}.

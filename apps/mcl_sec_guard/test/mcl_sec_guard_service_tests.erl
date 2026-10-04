@@ -94,10 +94,11 @@ authority_matches_what_is_announced_test() ->
 supervisor_starts_and_stops_test() ->
     application:set_env(mcl_sec_guard, proposal_log,
                         "/tmp/mcl_sec_guard_sup_test.log"),
+    {ok, _} = application:ensure_all_started(ranch),
     {ok, Pid} = mcl_sec_guard_sup:start_link(),
     ?assert(is_process_alive(Pid)),
-    ?assertMatch([{mcl_sec_guard_recorder, _, worker, _}],
-                 supervisor:which_children(Pid)),
+    ?assertEqual([mcl_sec_guard_admin, mcl_sec_guard_recorder],
+                 lists:sort([Id || {Id, _, _, _} <- supervisor:which_children(Pid)])),
     unlink(Pid),
     exit(Pid, shutdown),
     application:unset_env(mcl_sec_guard, proposal_log).

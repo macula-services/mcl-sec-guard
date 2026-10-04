@@ -102,7 +102,9 @@
         {proposal_log,  "${MCL_SEC_GUARD_PROPOSAL_LOG}"},
         %% The decision seam: the placeholder rule in P0, the
         %% model-backed proposer later.
-        {proposer,      mcl_sec_guard_proposer_rule}
+        {proposer,      mcl_sec_guard_proposer_rule},
+        %% The admin console: binds 0.0.0.0, no auth (dev-fleet posture).
+        {admin_port,    ${MCL_SEC_GUARD_ADMIN_PORT}}
     ]},
     {kernel, [{logger_level, info}]}
 ].

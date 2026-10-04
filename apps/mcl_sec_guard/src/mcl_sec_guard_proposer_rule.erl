@@ -17,10 +17,12 @@
 propose(Fact) when is_map(Fact) ->
     case {field(Fact, <<"procedure">>),
           field(Fact, <<"callers_over_limit">>),
-          field(Fact, <<"denied_rate">>)} of
-        {Proc, Over, Denied}
+          field(Fact, <<"denied_rate">>),
+          field(Fact, <<"denied_size">>)} of
+        {Proc, Over, Denied, Sized}
           when is_binary(Proc), is_integer(Over), is_integer(Denied),
-               (Over > 0 orelse Denied > 0) ->
+               is_integer(Sized),
+               (Over > 0 orelse Denied > 0 orelse Sized > 0) ->
             #{procedure => Proc,
               proposed => #{per_caller_max => max(Over, 1)},
               reason =>

@@ -14,13 +14,29 @@
 init([]) ->
     {ok, #{}}.
 
-handle_event(_Topic, Payload, _Meta, State) ->
+handle_event(_Topic, Payload, Meta, State) ->
     Fact = fact_of(Payload),
     case mcl_sec_guard_proposer:propose(Fact) of
         none -> ok;
-        Proposal -> ok = mcl_sec_guard_recorder:record(Proposal)
+        Proposal -> ok = mcl_sec_guard_recorder:record(with_provenance(Proposal, Meta))
     end,
     {noreply, State}.
+
+%% The delivery metadata names the verified publisher: which node's
+%% pipeline published the fact, when, and its per-publisher sequence.
+%% The mesh only delivers verified publications, so this identity rides
+%% the signature. P0 records it so a human reviewer (and P1's
+%% approve/reject) knows WHO reported the window. Node ids are
+%% arbitrary bytes, not valid UTF-8: hex-encode for the wire.
+with_provenance(Proposal, Meta) ->
+    Proposal#{publisher => publisher_hex(maps:get(publisher, Meta, unknown)),
+              published_at_ms => maps:get(published_at, Meta, unknown),
+              seq => maps:get(seq, Meta, unknown)}.
+
+publisher_hex(Publisher) when is_binary(Publisher) ->
+    binary:encode_hex(Publisher, lowercase);
+publisher_hex(_) ->
+    unknown.
 
 %% A fact may arrive wrapped in `#{value := V}' (the SDK's example
 %% shape) or as the raw payload; accept both, refuse neither. Either

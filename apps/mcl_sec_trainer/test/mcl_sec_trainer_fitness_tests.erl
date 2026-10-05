@@ -56,6 +56,36 @@ the_defaults_carry_version_one_test() ->
     ?assertEqual(1, mcl_sec_trainer_fitness:version(Config)),
     ?assertEqual(4, maps:size(maps:get(weights, Config))).
 
+the_defaults_validate_test() ->
+    ?assertEqual(ok, mcl_sec_trainer_fitness:validate(mcl_sec_trainer_fitness:defaults())).
+
+a_bad_config_fails_loud_test() ->
+    Bad = fun(Default, Fun) -> mcl_sec_trainer_fitness:validate(Fun(Default)) end,
+    D = mcl_sec_trainer_fitness:defaults(),
+    ?assertMatch({error, {bad_fitness_config, version_required}},
+                 Bad(D, fun(M) -> maps:remove(version, M) end)),
+    ?assertMatch({error, {bad_fitness_config, weights_budgets_thresholds_required}},
+                 Bad(D, fun(M) -> M#{weights := nope} end)),
+    ?assertMatch({error, {bad_weights, _}},
+                 Bad(D, fun(M) -> M#{weights := #{containment => 0.5,
+                                                  admission => 0.5}} end)),
+    ?assertMatch({error, {bad_weights, _}},
+                 Bad(D, fun(M) -> M#{weights := #{containment => 1.2,
+                                                  admission => -0.2,
+                                                  recovery => 0.5,
+                                                  stability => 0.5}} end)),
+    ?assertMatch({error, {not_positive_integers, _}},
+                 Bad(D, fun(M) -> M#{budgets := #{recovery_windows => 0,
+                                                  churn => 10}} end)),
+    ?assertMatch({error, {bad_fitness_config, {not_a_map, [1]}}},
+                 mcl_sec_trainer_fitness:validate([1])).
+
+a_malformed_config_is_an_error_not_a_score_test() ->
+    D = mcl_sec_trainer_fitness:defaults(),
+    ?assertError({bad_fitness_config, _},
+                 mcl_sec_trainer_fitness:score(clean_measurements(),
+                                               maps:remove(version, D))).
+
 clean_measurements() ->
     #{attacker_attempted => 0, attacker_admitted => 0,
       legit_attempted => 0, legit_admitted => 0,

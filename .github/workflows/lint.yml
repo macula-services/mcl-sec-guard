@@ -14,6 +14,11 @@ on:
 jobs:
   check:
     runs-on: ["ubuntu-latest"]
+    env:
+      # faber_tweann (the trainer's learner dep) ships optional Rust
+      # NIFs; everything the trainer uses is pure Erlang, so skip the
+      # NIF build (the learner selects the fallback at first use).
+      FABER_TWEANN_SKIP_NIF: "1"
     container:
       # ⚠ THE SAME IMAGE AS THE Containerfile's builder, by digest. The service
       # tests guard that the two agree and that the step below refuses

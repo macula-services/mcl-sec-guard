@@ -55,6 +55,16 @@ run_set_files_are_recognized_by_name_test() ->
     ?assert(lists:suffix(".terms", filename:basename(File))),
     cleanup(Dir).
 
+hex_ids_survive_the_filename_verbatim_test() ->
+    %% genome ids are hex with UPPERCASE letters: the filename must
+    %% keep every character, or two genomes collide on one name
+    Dir = tmp_dir(),
+    ok = mcl_sec_trainer_reporter:write_runset(Dir, [sample_report()],
+                                               #{policy => <<"genome-2E112ED1">>}),
+    [File] = runset_files(Dir),
+    ?assert(lists:suffix("genome-2E112ED1.terms", filename:basename(File))),
+    cleanup(Dir).
+
 sample_report() ->
     mcl_sec_trainer_episode:run(calm, #{policy => fun(_Ctx) -> none end,
                                         policy_name => incumbent}).

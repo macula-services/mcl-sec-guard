@@ -78,8 +78,8 @@ runset_name(Policy) ->
 
 filename_safe(Policy) when is_binary(Policy) ->
     [C || C <- unicode:characters_to_list(Policy),
-          (C >= $a andalso C =< $z) orelse (C >= $0 andalso C =< $9)
-              orelse C =:= $- orelse C =:= $_];
+          (C >= $a andalso C =< $z) orelse (C >= $A andalso C =< $Z)
+              orelse (C >= $0 andalso C =< $9) orelse C =:= $- orelse C =:= $_];
 filename_safe(Policy) ->
     io_lib:format("~p", [Policy]).
 

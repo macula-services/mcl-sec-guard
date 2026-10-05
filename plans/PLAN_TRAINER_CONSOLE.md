@@ -105,11 +105,16 @@ from the browser, and what stays a deliberate act:
   (or an episode on chosen seeds) → reporter → redirect to `/trainer`.
   Episodes are milliseconds; no job queue, no background state. The
   COST is real and is the whole point of the decision: the trainer's
-  net-free modules must enter the release (relx list gains
-  `mcl_sec_trainer`; `enabled` stays false; faber still does not ship).
-  This reverses the current "stays out of the image" decision, which is
-  why it is flagged for Raf rather than assumed. Alternative if refused:
-  Phase A plus a documented one-liner is a complete observation story.
+  modules must enter the release (relx list gains `mcl_sec_trainer`;
+  `enabled` stays false). **Step-4 wrinkle (2026-10-06):** the trainer
+  now depends on `faber_tweann`, so shipping the app pulls faber into
+  the image — the split is: inline the two activations into
+  `mcl_sec_trainer_policy_net` (tanh/sigmoid are three lines), move
+  faber to the trainer's test profile, and keep
+  `mcl_sec_trainer_learner` (the only faber importer) out of the
+  release build — the run button evaluates genomes and the baseline,
+  evolution stays a dev-box act. Alternative if refused: Phase A plus
+  a documented one-liner is a complete observation story.
 - **Never in the UI, at any phase:** the envelope (deploy config), the
   fitness vector (versioned claim), applying limits (guardian/reflex
   only). The console stays an audit window; the plans already demoted

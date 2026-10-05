@@ -5,6 +5,11 @@
 %%% subscriber only ever OBSERVES: nothing here can apply a change, and
 %%% nothing it reads from the mesh is treated as instruction — a fact's
 %%% payload is data into the proposal seam, nothing more.
+%%%
+%%% The facts arrive from guarded services on the mcl-om 0.37.6
+%%% pipeline: windowed denial counters (a quiet window publishes
+%%% nothing) and the max_distinct_callers flood bound ride with the
+%%% dependency, resolved fresh at image-build time.
 -module(mcl_sec_guard_subscriber).
 
 -behaviour(macula_subscriber).

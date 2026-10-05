@@ -62,6 +62,7 @@ sample_report() ->
 tmp_dir() ->
     Dir = filename:join("/tmp/opencode",
                         "reporter-" ++ integer_to_list(erlang:unique_integer([positive]))),
+    ok = filelib:ensure_dir(filename:join(Dir, "x")),
     file:del_dir_r(Dir),
     ok = file:make_dir(Dir),
     Dir.

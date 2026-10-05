@@ -7,6 +7,10 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+- **mcl_om floor rides 0.37.6**: windowed denial counters (a quiet window
+  publishes nothing) and the max_distinct_callers flood bound.
+
+
 - **mcl_om floor 0.37.3**: stats carry hex-encoded caller ids (wire-clean; the
   previous images returned unknown_error from get_limits).
 

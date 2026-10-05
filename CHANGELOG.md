@@ -7,6 +7,14 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+- **The trainer application, rung 0** (`apps/mcl_sec_trainer`): the pure
+  simulator world (`mcl_sec_trainer_sim`), the eight-scenario suite
+  (`mcl_sec_trainer_scenarios`), the episode runner and the versioned fitness
+  vector, held to the real mcl_om_guard by a conformance test that replays
+  identical traffic through both. The incumbent placeholder rule is scored as
+  the baseline every genome must beat — off by default, net-free, not in the
+  release.
+
 - **mcl_om floor rides 0.37.6**: windowed denial counters (a quiet window
   publishes nothing) and the max_distinct_callers flood bound.
 

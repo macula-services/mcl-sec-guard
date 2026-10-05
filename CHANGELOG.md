@@ -7,6 +7,13 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+- **The trainer scoreboard, Phase A** (`plans/PLAN_TRAINER_CONSOLE.md`):
+  `mcl_sec_trainer_reporter` writes run sets as term files (the file is the
+  contract — the trainer's beams stay out of the image), and the console
+  gains `/trainer` (scoreboard + candidate-vs-incumbent diff), `/trainer.ndjson`
+  (raw feed) and `/trainer/episode` (drill-down). The console is an audit
+  window in both directions: it observes, and decides nothing.
+
 - **The trainer application, rung 0** (`apps/mcl_sec_trainer`): the pure
   simulator world (`mcl_sec_trainer_sim`), the eight-scenario suite
   (`mcl_sec_trainer_scenarios`), the episode runner and the versioned fitness

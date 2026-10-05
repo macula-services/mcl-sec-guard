@@ -12,7 +12,11 @@ the_admin_binds_every_interface_by_default() ->
     ?assertEqual(8458, mcl_sec_guard_admin:port()),
     ?assertEqual([{port, 8458}, {ip, {0, 0, 0, 0}}],
                  mcl_sec_guard_admin:socket_opts()),
-    ?assertMatch([{'_', _, _}], mcl_sec_guard_admin_handler:routes()).
+    [{'_', _Constraints, Routes}] = mcl_sec_guard_admin_handler:routes(),
+    Segments = lists:sort([[S || S <- Segs] || {Segs, _C, _H, _O} <- Routes]),
+    ?assertEqual(lists:sort([[], [<<"proposals.ndjson">>], [<<"trainer">>],
+                             [<<"trainer.ndjson">>], [<<"trainer">>, <<"episode">>]]),
+                 Segments).
 
 the_page_renders_the_proposal_lines() ->
     Page = mcl_sec_guard_admin_handler:page(<<"#{a => 1}.\n#{b => 2}.\n">>),

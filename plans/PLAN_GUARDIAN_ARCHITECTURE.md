@@ -14,6 +14,12 @@ mcl-warden and mcl-sentinel**: those two are the host-threat commons subsystem; 
 a control-plane service with its own inputs and outputs, and nothing in its design consumes
 warden facts or sentinel campaigns.
 
+**Added (Raf, 2026-10-05):** the deciding step becomes a TWEANN (`faber_tweann`), and it
+splits — evolution stays central in this service, execution grows a local tighten-only
+reflex seam in mcl-om. The console's approve/reject is demoted to an audit window, not a
+gate: the human owns the envelope, not each proposal. See *Where the SecOps brain lives*,
+below.
+
 ## What it is
 
 A control-plane service that (1) READS each service's limit telemetry — `get_limits`: limits
@@ -53,6 +59,73 @@ verification after an apply), not the driving signal.
   mesh capability with mcl-om#13.
 - Station limits (payload cap, per-NodeId call rate) once #40/#41 land — same pair, same
   contract (see PLAN_GUARDIAN_CONTROL_SURFACE.md).
+
+## Where the SecOps brain lives: central evolution, local reflex (added 2026-10-05)
+
+The split exists so the mesh tightens its own defenses at the speed of the traffic, inside
+bounds a human set, and without a human in the loop. The deciding step splits in two:
+**evolution stays central in this service; execution grows a local reflex in mcl_om.** The
+model is a TWEANN (`faber_tweann` on hex), replacing the placeholder rule.
+
+Rejected alternatives, for the record. **The full brain inside mcl-om** — every service
+evolving locally — puts a changing, experimental control system in the estate's
+most-depended-on library, forfeits the cross-service view that is the security value, and
+makes every policy change a library release; one bad mutation touches everyone at once.
+**Evaluator-only in mcl-om** (evolution distributed, P5-shaped) is a scale answer to a
+problem not yet large, and it belongs to the search programme, not the guardian. mcl-om
+gains the reflex *runtime*; this service keeps the *learner* and the *audit*.
+
+### The reflex seam (mcl-om)
+
+- **`mcl_om_guard_policy`** (working name) — a behaviour with one pure callback,
+  `decide(Stats, Genome) -> [Move]`, `Move = #{procedure := P, limits := Overrides}`; the
+  default is `[]`, so an unconfigured service behaves exactly as today.
+- Evaluated on the **same tick that publishes `denials_observed`**
+  (`mcl_om_guard:report_window_denials/1`), per declared procedure, against the same `Stats`
+  map the fact carries. No new sensor, no new cadence.
+- Moves apply through the **same `set_limits` path an operator uses**: envelope-checked,
+  validated, anti-thrashed, audited with `tier => reflex`. A local move needs no realm tier:
+  a service tuning its own limits is not a new privilege — a popped service can ignore its
+  limits entirely; the envelope is the human clamp.
+- **The genome is data.** App env `{mcl_om, guard_policy, #{module, genome}}` first; later a
+  signed `guard_policy_updated` fact accepted only from the configured guardian node id, the
+  last genome surviving mesh loss. The substrate gains a **minimal evaluator for a distilled,
+  fixed-shape policy** (weights/taus), never the faber engine: faber may search topologies
+  freely in the guardian, but the reflex it ships is distilled to a shape mcl-om can run in a
+  few hundred dependency-free lines. Local topology evolution is earned only if a fixed shape
+  cannot express the champion.
+- **The asymmetry.** A reflex may tighten, or return a limit to the human baseline; it may
+  not go looser than the baseline. Only the central brain (aggregate view, one tier, one
+  audit) may hold a posture below baseline, and it can disable a service's reflex. A wrong
+  or popped reflex can only lean the safe way.
+
+### The brain (this service)
+
+- Evolves genomes with `faber_tweann` against recorded/simulated episodes and the aggregate
+  `denials_observed` stream; ships the distilled champion to services and observes outcomes.
+- The reward vector and the evaluation environment are the keystone work — a guardian is only
+  as good as its definition of "better" — and get their own plan
+  (`PLAN_AUTONOMOUS_GUARDIAN.md`, to be written next).
+- One audit view: the console renders the timeline (input window, reflex/brain move, reward),
+  not an approval queue.
+
+### Two writers, one procedure (open)
+
+The reflex and the guardian can both write one procedure's limits, and anti-thrash is per
+(caller, service), which does not separate them. Settle before enabling both: a central
+apply wins for a cooldown the service can read; a reflex yields to any central apply within
+N windows; the audit tier names the writer and the console shows both.
+
+### Phasing (refines the phases above)
+
+| Phase | What | Where |
+|---|---|---|
+| 0 | shadow: facts → placeholder proposals, apply nothing (today) | guard |
+| 1 | policy seam + offline evolution harness over recorded episodes | mcl-om seam, guard brain |
+| 2 | shadow reflex: genome evaluated, moves recorded, not applied; compared against the rule | mcl-om + guard |
+| 3 | central apply within envelope; the `guardian` tier minted | guard → services |
+| 4 | reflex enabled (tighten-only, opted-in services); genome distribution | mcl-om |
+| 5 | station actuators (#42/#43) | station |
 
 ## Guardrails (non-negotiable)
 

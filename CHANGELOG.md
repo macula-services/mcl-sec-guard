@@ -7,6 +7,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-05
+
+The first release: the P0 shadow guardian (senses, proposes, records) and its
+admin console, released so the dev fleet's :latest is a signed release. Built
+against mcl_om 0.37.6 and macula 13.5.0, the newest the constraints float to.
+
 - **The trainer scoreboard, Phase A** (`plans/PLAN_TRAINER_CONSOLE.md`):
   `mcl_sec_trainer_reporter` writes run sets as term files (the file is the
   contract — the trainer's beams stay out of the image), and the console

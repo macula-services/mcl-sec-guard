@@ -1,4 +1,4 @@
-%%% @doc The fitness vector (PLAN_AUTONOMOUS_GUARDIAN.md, §2).
+%%% @doc The fitness vector (mcl-sec-guard#20).
 %%%
 %%% "Better" is machine-optimisable, and the definition is a CLAIM owned
 %%% and versioned by a human. One episode (one procedure, one scenario,

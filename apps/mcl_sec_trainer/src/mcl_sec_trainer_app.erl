@@ -1,7 +1,7 @@
 %%% @doc OTP application entry for the trainer.
 %%%
-%%% The guardian's second OTP application (PLAN_AUTONOMOUS_GUARDIAN.md,
-%%% "The environment"): its own start module and supervisor, so it starts
+%%% The guardian's second OTP application (mcl-sec-guard#20,
+%%% the environment): its own start module and supervisor, so it starts
 %%% and stops as one unit. It is NOT a service — no release, identity,
 %%% container or health of its own — and not a "library app" either: the
 %%% executable artifact is the release, and this application ships inside

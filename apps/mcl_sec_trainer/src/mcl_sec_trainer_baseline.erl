@@ -1,8 +1,8 @@
 %%% @doc The incumbent scored: the P0 placeholder rule, driven in the
 %%% simulator exactly as the live loop drives it.
 %%%
-%%% The baseline every genome must beat (PLAN_AUTONOMOUS_GUARDIAN.md,
-%%% "The first build", step 2). The rule is mcl_sec_guard_proposer_rule,
+%%% The baseline every genome must beat (mcl-sec-guard#20,
+%%% the incumbent scored as baseline). The rule is mcl_sec_guard_proposer_rule,
 %%% the deterministic timidity that already taught its lesson live (the
 %%% 449 probe proposals of 2026-10-04/05): a window that saw denials
 %%% proposes lowering `per_caller_max' to the over-limit count, and

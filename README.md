@@ -1,9 +1,12 @@
 # mcl-sec-guard
 An intelligent security guard service
 
-Design and plans live in [`plans/`](plans/): the guardian architecture, the
-autonomous guardian's fitness vector, the control surface (`get_limits` /
-`set_limits`) it actuates, and the trainer console plan.
+Plans live in GitHub issues labelled `plan`: the guardian architecture
+(#19), the autonomous guardian's fitness, environment and learner (#20),
+and the trainer console (#21). The control surface it actuates
+(`get_limits` / `set_limits`, the `denials_observed` facts) is built in
+mcl-om and documented there, in
+[`docs/design/GUARDIAN_CONTROL_SURFACE.md`](https://github.com/macula-services/mcl-om/blob/main/docs/design/GUARDIAN_CONTROL_SURFACE.md).
 
 ## P0 shadow (current)
 
@@ -42,8 +45,7 @@ directions: it observes and decides nothing.
 - `/trainer.ndjson` — the raw feed, one JSON line per episode
 - `/trainer/episode?scenario=...` — one episode's drill-down
 
-Run sets are written by `mcl_sec_trainer_reporter` (see
-`plans/PLAN_TRAINER_CONSOLE.md`).
+Run sets are written by `mcl_sec_trainer_reporter` (see #21).
 
 ## Building
 

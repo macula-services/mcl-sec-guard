@@ -1,5 +1,5 @@
 %%% @doc The run-set reporter: the trainer's output as a durable file
-%%% (PLAN_TRAINER_CONSOLE.md, Phase A).
+%%% (the trainer console, mcl-sec-guard#21, phase A).
 %%%
 %%% A run set is one policy's reports across the scenario table (or one
 %%% episode), plus its provenance — written as an Erlang-term file so

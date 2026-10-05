@@ -1,4 +1,4 @@
-%%% @doc The fixed scenario table (PLAN_AUTONOMOUS_GUARDIAN.md, rung 0).
+%%% @doc The fixed scenario table (mcl-sec-guard#20, rung 0).
 %%%
 %%% Each scenario is one deterministic, seedable population script: a
 %%% list of T windows, each window a list of calls tagged with the

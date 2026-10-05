@@ -1,5 +1,5 @@
 %%% @doc The trainer scoreboard's pure half: reads run-set artifacts and
-%%% renders them (PLAN_TRAINER_CONSOLE.md, Phase A).
+%%% renders them (the trainer console, mcl-sec-guard#21, phase A).
 %%%
 %%% The reader side of the reporter's file contract. The trainer's
 %%% modules are deliberately NOT in the released image (Phase B's

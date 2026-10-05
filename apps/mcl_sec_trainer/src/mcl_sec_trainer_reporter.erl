@@ -66,6 +66,7 @@ write_runset(_Dir, _EmptyOrBad, _Meta) ->
     {error, no_reports}.
 
 write(Path, Term) ->
+    ok = filelib:ensure_dir(filename:join(Path, "x")),
     case file:write_file(Path, io_lib:format("~p.~n", [Term])) of
         ok -> ok;
         {error, _} = Error -> Error

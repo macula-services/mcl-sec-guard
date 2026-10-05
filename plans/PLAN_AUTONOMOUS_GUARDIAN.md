@@ -106,9 +106,18 @@ diversity_tightness  -> max_distinct_callers
 
 ## 5. The environment
 
-Evaluation lives in mcl-sec-guard; nothing here ships to services.
+Evaluation lives in mcl-sec-guard; nothing here ships to services. The trainer is a second
+OTP application in this repo's umbrella — `apps/mcl_sec_trainer`, with its own start module
+and supervisor, so it starts and stops as one unit. It is not a service (no release,
+identity, container or health of its own), and it is not a "library app": in OTP an
+application either has a start module and boots something, or it does not; the executable
+artifact is the release, and this application ships inside the guardian's when in-service
+training is wanted. `faber_tweann` is a dependency of this application only, so the service
+application's dependency closure stays lean. It is **off by default**
+(`{mcl_sec_trainer, enabled, false}`); offline runs boot it from a shell or an escript, and
+the world it trains in is `mcl_sec_trainer_sim`.
 
-**Rung 0 — synthetic world (`mcl_guard_sim`).** A pure, fast, seedable simulation of the
+**Rung 0 — synthetic world (`mcl_sec_trainer_sim`).** A pure, fast, seedable simulation of the
 window arithmetic, reusing the *semantics* of `mcl_om_guard`'s counters and
 `mcl_om_guard_limits`' validation/envelope. A conformance test replays identical synthetic
 traffic through the real `mcl_om_guard` (short windows, one real pool) and the sim and
@@ -171,7 +180,7 @@ Operational rules, drawn from the fovea interference hazard:
 
 **Coevolution is the strong version.** The fixed scenario table above comes first; once the
 harness is trustworthy, attacker policies can be evolved against the defender inside
-`mcl_guard_sim` (faber's P7 shape) — adaptive attacks, free and labelled, no live risk.
+`mcl_sec_trainer_sim` (faber's P7 shape) — adaptive attacks, free and labelled, no live risk.
 Live campaigns then measure transfer, not discovery.
 
 ## 6. The learner
@@ -216,7 +225,8 @@ evidence. The report is always the full vector, never the scalar.
 
 ## 9. The first build
 
-1. `mcl_guard_sim` + the scenario suite + the conformance test against the real guard.
+1. The `mcl_sec_trainer` application: its pure sim module, the scenario suite, and the
+   conformance test against the real guard.
 2. Score the incumbent placeholder rule in it — the baseline every genome must beat.
 3. The pure fitness module + versioned config + tests.
 4. The `sep_cma_es` arm on the distilled shape; first champion numbers, reported as a

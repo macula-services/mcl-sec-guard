@@ -135,11 +135,44 @@ A mismatch is a sim bug, not a licence to tune. Aggregates only; not a fitness s
 **Rung 2 — live shadow.** The champion genome runs on beam00 against real
 `denials_observed`: it computes moves, records them with `source => genome`, and applies
 nothing. Its trajectory is compared with the incumbent rule's on the same live windows.
-Bounded probe campaigns supply pressure (the existing probe scripts).
+Bounded, announced campaigns supply pressure (see *Measurement, labels, and campaigns*).
 
 **Rung 3 — canary apply.** Central apply within envelope on mcl-echo, bounded window,
 auto-revert (stop applying; the last limits persist), then widen service by service. The
 reflex waits until this is boring (see the architecture plan's phasing).
+
+### Measurement, labels, and campaigns
+
+The optimizer must not measure its own success. Containment and admission are ground truth
+only in the simulator; live, the guard's own counters cannot tell a defended attack from a
+self-inflicted starvation. Live fitness evidence therefore comes from outside the actuated
+domain, in three separable artifacts:
+
+| Artifact | Ground truth | Shape |
+|---|---|---|
+| **Canary / witness** | known-benign calls: attempted vs admitted | a small client with a pinned identity, or a fovea-style observer probing on a schedule and signing what it saw; harmless service-shaped |
+| **Campaign harness** | which traffic was hostile, and how much reached the handler | scripts plus a signed manifest, run from a box under human scheduling — not an always-on mesh service |
+| **Labels** | which windows belong to which scenario | the signed manifest itself; the guard consumes it and marks affected windows as campaign, so evaluation data never masquerades as organic pressure |
+
+Operational rules, drawn from the fovea interference hazard:
+
+- **Witnesses are provisioned, not guessed.** A canary's and fovea's node ids get
+  per-caller budgets that survive tightening, and a probe refused by design (the KX
+  challenge closed before CONNECT) is not counted as a denial — otherwise the defense
+  starves its own witness and the guardian reads the witness's failures as pressure.
+- **A campaign is announced before it runs, signed, and bounded**: allowlisted targets,
+  envelope-bounded intensity and duration, a kill switch, signed results. Campaign windows
+  are excluded from organic fitness and used as labelled evaluation only.
+- **No attacker service on the shared mesh.** An always-on flooder is a weapon with a
+  release pipeline, contaminates the telemetry it exists to measure, and points at shared
+  stations carrying real traffic. If the role ever needs a service shape, it is a
+  lab-realm, tier-gated coordinator whose name does not read as "we ship an attacker" —
+  and the traffic-generating half stays a client.
+
+**Coevolution is the strong version.** The fixed scenario table above comes first; once the
+harness is trustworthy, attacker policies can be evolved against the defender inside
+`mcl_guard_sim` (faber's P7 shape) — adaptive attacks, free and labelled, no live risk.
+Live campaigns then measure transfer, not discovery.
 
 ## 6. The learner
 
@@ -178,8 +211,8 @@ evidence. The report is always the full vector, never the scalar.
 | Promotion | Gate |
 |---|---|
 | offline → shadow | on held-out scenario seeds (N ≥ 200 episodes): zero hard-gate failures; containment and admission at least the incumbent's; strictly better churn or better recovery |
-| shadow → canary | shadow trajectory reproduces the offline ranking on live windows; zero would-be envelope violations; no starvation window |
-| canary → wider | one bounded pressure campaign: service `/health` green throughout, limits returned to baseline after, rollback exercised at least once |
+| shadow → canary | shadow trajectory reproduces the offline ranking on live windows; zero would-be envelope violations; no starvation window; the **canary** confirms admission on live traffic |
+| canary → wider | one announced, bounded **campaign**: containment from the campaign's labels, admission from the canary, service `/health` green throughout, limits returned to baseline after, rollback exercised at least once |
 
 ## 9. The first build
 
@@ -195,8 +228,9 @@ Small commits; each step's numbers go into the session record, not into prose.
 
 1. `window_ms` in the action space later, or permanently human-only?
 2. One policy for all procedures, or per procedure class (size-heavy vs rate-heavy)?
-3. Live proxies for admission without labels: admitted-throughput trend is weak evidence;
-   is a bounded raw trace (sizes/rates, public caller ids) worth recording for rung 2?
+3. Canary/witness details: cadence, per-caller budget, and who runs it — fovea's observer
+   role, or a dedicated canary identity? And is a bounded raw trace (sizes/rates, public
+   caller ids) worth recording for rung 2, or do the canary and campaign labels suffice?
 4. Vector review cadence: adversarial pass per version bump, or on a schedule?
 5. Genome distribution and rollback exactly (signed fact vs gated RPC; who countersigns).
 

@@ -26,7 +26,7 @@
 %%% versions without re-evaluation.
 -module(mcl_sec_trainer_fitness).
 
--export([config/0, defaults/0, version/1, score/2]).
+-export([config/0, defaults/0, version/1, score/2, validate/1]).
 
 -type measurements() :: map().
 -type config() :: map().
@@ -51,12 +51,75 @@ defaults() ->
 version(Config) ->
     maps:get(version, Config).
 
+%% @doc A fitness config is a human CLAIM: it must be well-formed, and a
+%% bad one fails loud instead of silently skewing what evolution
+%% optimises. Well-formed: a map; a positive-integer version; weights
+%% for exactly the four concerns, each in [0, 1], summing to 1 (within
+%% 1e-6); positive-integer budgets and thresholds.
+-spec validate(config()) -> ok | {error, term()}.
+validate(Config) when is_map(Config) ->
+    case {maps:get(version, Config, undefined),
+          maps:get(weights, Config, undefined),
+          maps:get(budgets, Config, undefined),
+          maps:get(thresholds, Config, undefined)} of
+        {Version, Weights, Budgets, Thresholds}
+          when is_integer(Version), Version > 0, is_map(Weights),
+               is_map(Budgets), is_map(Thresholds) ->
+            first_error([validate_weights(Weights),
+                         validate_positives(Budgets),
+                         validate_positives(Thresholds)]);
+        {Version, _W, _B, _T} when is_integer(Version), Version > 0 ->
+            {error, {bad_fitness_config, weights_budgets_thresholds_required}};
+        _MissingVersion ->
+            {error, {bad_fitness_config, version_required}}
+    end;
+validate(NotMap) ->
+    {error, {bad_fitness_config, {not_a_map, NotMap}}}.
+
+first_error([]) -> ok;
+first_error([{error, _} = Error | _Rest]) -> Error;
+first_error([ok | Rest]) -> first_error(Rest).
+
+validate_weights(Weights) ->
+    Keys = maps:keys(Weights),
+    case lists:sort(Keys) =:= [admission, containment, recovery, stability] of
+        false ->
+            {error, {bad_weights, Keys}};
+        true ->
+            weights_verdict([maps:get(K, Weights) || K <- Keys])
+    end.
+
+weights_verdict(Values) ->
+    case lists:all(fun in_unit/1, Values)
+             andalso abs(lists:sum(Values) - 1.0) < 1.0e-6 of
+        true -> ok;
+        false -> {error, {bad_weights, Values}}
+    end.
+
+in_unit(V) -> is_number(V) andalso V >= 0 andalso V =< 1.
+
+validate_positives(Map) ->
+    positives_verdict(maps:to_list(Map)).
+
+positives_verdict(Entries) ->
+    case lists:all(fun positive/1, Entries) of
+        true -> ok;
+        false -> {error, {not_positive_integers, Entries}}
+    end.
+
+positive({_K, V}) -> is_integer(V) andalso V > 0.
+
 %% @doc Score one episode's measurements. Returns a report map with the
 %% full vector and per-gate verdicts; `fitness' is the weighted scalar,
 %% or `rejected' when any hard gate failed (the failing gate names
-%% itself and its evidence).
+%% itself and its evidence). A malformed config is an error, not a
+%% score.
 -spec score(measurements(), config()) -> map().
 score(Measurements, Config) ->
+    ok = case validate(Config) of
+             ok -> ok;
+             {error, Reason} -> error({bad_fitness_config, Reason})
+         end,
     Vector = vector(Measurements, Config),
     Gates = gates(Measurements, Config),
     Fitness = case [G || G <- maps:values(Gates), G =/= ok] of

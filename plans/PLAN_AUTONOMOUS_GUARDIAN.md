@@ -234,15 +234,31 @@ evidence. The report is always the full vector, never the scalar.
 
 Small commits; each step's numbers go into the session record, not into prose.
 
-## 10. Open questions
+## 10. Open questions — settled 2026-10-06 (before the learner grew)
 
-1. `window_ms` in the action space later, or permanently human-only?
-2. One policy for all procedures, or per procedure class (size-heavy vs rate-heavy)?
-3. Canary/witness details: cadence, per-caller budget, and who runs it — fovea's observer
-   role, or a dedicated canary identity? And is a bounded raw trace (sizes/rates, public
-   caller ids) worth recording for rung 2, or do the canary and campaign labels suffice?
-4. Vector review cadence: adversarial pass per version bump, or on a schedule?
-5. Genome distribution and rollback exactly (signed fact vs gated RPC; who countersigns).
+1. **`window_ms` in the action space: NO — permanently human-only.**
+   Changing it renumbers the counters' windows and changes the
+   observation cadence mid-episode, which invalidates the history
+   features while the episode runs. It is deploy config, inside no
+   scenario's teaching. Revisit only with a recorded attack that a
+   different window length defeats.
+2. **One policy for all procedures to start. DECIDED.** The feature
+   vector is per-procedure and normalized against that procedure's own
+   envelope, so one policy already generalises; per-class features
+   (size-heavy vs rate-heavy) become an experiment to run against the
+   first champion, not a prerequisite.
+3. **Canary/witness details (cadence, per-caller budget, owner):
+   deferred to rung 2 planning.** They do not shape the learner. The
+   standing rules from *Measurement, labels, and campaigns* hold:
+   witnesses are provisioned (per-caller budgets survive tightening),
+   refusal-by-design is not a denial.
+4. **Genome distribution and rollback: deferred to rung 3.** The
+   architecture plan's own rule stands as the default: the genome is a
+   signed fact accepted only from the configured guardian node id;
+   rollback = stop applying (the last limits persist).
+5. **Vector review cadence: per version bump.** The adversarial pass is
+   part of changing the vector, not a schedule — a version change is a
+   new claim, and every claim gets its pass.
 
 ## References
 

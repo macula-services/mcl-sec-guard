@@ -48,7 +48,7 @@ run(Scenario, Opts) when is_map(Opts) ->
                mcl_sec_trainer_sim:new(#{seed => Seed}), Proc, CapLimits),
     Baseline = maps:get(limits, mcl_sec_trainer_sim:get(World0, Proc)),
     Script = mcl_sec_trainer_scenarios:windows(Scenario, #{windows => T, seed => Seed}),
-    Acc0 = #{window => -1, prev_stats => undefined,
+    Acc0 = #{window => -1, prev_stats => undefined, prev_prev_stats => undefined,
              att_attempted => 0, att_admitted => 0,
              leg_attempted => 0, leg_admitted => 0,
              leg_win_attempted => 0, leg_win_admitted => 0,
@@ -71,7 +71,8 @@ loop(World, Proc, [Calls | Rest], Policy, GuardianId, Baseline, Acc) ->
     Acc3 = window_end(World2, Proc, K, Baseline, Stats, Acc2),
     World3 = mcl_sec_trainer_sim:advance(World2, Proc),
     loop(World3, Proc, Rest, Policy, GuardianId, Baseline,
-         Acc3#{window => K, prev_stats => Stats}).
+         Acc3#{window => K, prev_stats => Stats,
+               prev_prev_stats => maps:get(prev_stats, Acc)}).
 
 %% Sense (the window that just closed), decide, apply. Window 0 has
 %% nothing to sense; a guardian-tier move that the envelope refuses is
@@ -79,12 +80,18 @@ loop(World, Proc, [Calls | Rest], Policy, GuardianId, Baseline, Acc) ->
 decide(World, _Proc, _Policy, _GuardianId, _K, undefined, Acc) ->
     {World, Acc};
 decide(World, Proc, Policy, GuardianId, _K, PrevStats, Acc) ->
-    case Policy(#{proc => Proc, stats => PrevStats}) of
+    case Policy(#{proc => Proc, stats => PrevStats, prev_stats => prev_prev(Acc)}) of
         none ->
             {World, Acc};
         Overrides when is_map(Overrides) ->
             apply_move(World, Proc, GuardianId, Overrides, Acc)
     end.
+
+%% One-step history for policies that read it (the fixed-shape
+%% feedforward concatenates it; K=1 is the first cut, LTC taus the
+%% experiment). Window 0 has no prior window: undefined.
+prev_prev(Acc) ->
+    maps:get(prev_prev_stats, Acc, undefined).
 
 apply_move(World, Proc, GuardianId, Overrides, Acc) ->
     Before = mcl_sec_trainer_sim:get(World, Proc),

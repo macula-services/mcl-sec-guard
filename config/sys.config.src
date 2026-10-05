@@ -100,6 +100,10 @@
         {alert_topic,   <<"${MCL_SEC_GUARD_ALERT_TOPIC}">>},
         %% Where proposals land, one ~0p line each.
         {proposal_log,  "${MCL_SEC_GUARD_PROPOSAL_LOG}"},
+        %% Where the trainer's run-set artifacts land; the console
+        %% renders them. The deploy points this at the persistent data
+        %% volume; the default keeps dev boots working.
+        {trainer_runs,  "${MCL_SEC_GUARD_TRAINER_RUNS:-trainer_runs}"},
         %% The decision seam: the placeholder rule in P0, the
         %% model-backed proposer later.
         {proposer,      mcl_sec_guard_proposer_rule},

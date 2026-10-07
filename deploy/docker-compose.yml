@@ -56,8 +56,6 @@ services:
       - MCL_NODE_NAME=mcl_sec_guard
       - MCL_NODE_HOST=127.0.0.1
       - MCL_COOKIE=mcl_sec_guard
-      # Host networking means a port already bound on this host fails SILENTLY.
-      - MCL_HEALTH_PORT=8457
       # The alert topic the guardian subscribes to, and where the
       # trainer's run-set artifacts land (the console renders them;
       # point this at the persistent data volume in placement config).

@@ -9,6 +9,7 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **`/health` on a Unix socket, not a port (#23).** mcl_om 0.39's `health_socket`, `/run/mcl/health.sock` inside the container: no TCP health listener runs, the image's HEALTHCHECK uses `curl --unix-socket`, and nothing configures, exposes or passes a health port. `scripts/health.sh` asks the running container.
 - **On macula 14.2 and mcl_om 0.38 (#23).** `~> 14.2` (at least 14.2.1, macula-io/macula#85) and `~> 0.38`, the current SDK base, so an SDK fix reaches this service with the rest. The sealing posture is unchanged.
 
 ### Changed

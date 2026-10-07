@@ -1,6 +1,6 @@
 {application, mcl_sec_trainer, [
     {description, "The guardian's trainer: the simulator world, scenarios and learner arm (not a service, not a library app)"},
-    {vsn, "0.1.0"},
+    {vsn, "0.2.0"},
     {registered, [mcl_sec_trainer_sup]},
     {mod, {mcl_sec_trainer_app, []}},
     {applications, [

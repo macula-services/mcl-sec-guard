@@ -20,7 +20,7 @@
 
 info() ->
     #{name => <<"mcl-sec-guard">>,
-      version => <<"0.2.0">>,
+      version => <<"0.2.1">>,
       description => <<"The security guardian, P0 shadow: observes denial facts and records proposals; applies nothing">>}.
 
 start(_Opts) -> mcl_sec_guard_sup:start_link().

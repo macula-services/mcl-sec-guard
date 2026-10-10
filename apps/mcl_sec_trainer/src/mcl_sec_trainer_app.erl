@@ -11,8 +11,9 @@
 %%% OFF BY DEFAULT: `{mcl_sec_trainer, enabled, false}'. Offline runs use
 %%% the pure world (mcl_sec_trainer_sim) directly; no processes are needed
 %%% for that. The supervisor starts no children yet — the learner arm
-%%% (faber_tweann, a dependency of this application only) arrives with the
-%%% in-service step, gated on `enabled'.
+%%% lives in its own app (mcl_sec_trainer_learner, the one faber-scoped
+%%% app, mcl-sec-guard#14) and in-service training arrives with the step
+%%% gated on `enabled'.
 -module(mcl_sec_trainer_app).
 
 -behaviour(application).

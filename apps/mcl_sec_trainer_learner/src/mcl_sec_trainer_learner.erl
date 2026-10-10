@@ -1,6 +1,11 @@
 %%% @doc The baseline learner: sep_cma_es over the distilled fixed
 %%% shape (the plan's step 4, "Baseline first").
 %%%
+%%% Lives in its own app, `mcl_sec_trainer_learner' (mcl-sec-guard#14),
+%%% so faber_tweann scopes to this app alone: the trainer app is
+%%% faber-free, and the learner never enters the release — evolution
+%%% stays a dev-box act.
+%%%
 %%% sep_cma_es (faber_tweann) evolves flat weight vectors and nothing
 %%% else — exactly the shape this fixed feedforward takes. One fitness
 %%% evaluation is the mean episode fitness over the scenario table, with

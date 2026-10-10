@@ -1,0 +1,16 @@
+{application, mcl_sec_trainer_learner, [
+    {description, "The trainer's learner arm: sep_cma_es over the fixed shape (faber-scoped, never in the release)"},
+    {vsn, "0.2.1"},
+    %% A code container (no `mod', no supervisor): nothing starts it,
+    %% and it never enters the release. faber_tweann, its only
+    %% dependency, is declared in this app's own rebar.config
+    %% (mcl-sec-guard#14).
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["Apache-2.0"]},
+    {links, [{"GitHub", "https://github.com/macula-services/mcl-sec-guard"}]}
+ ]}.

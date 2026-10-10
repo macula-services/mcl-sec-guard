@@ -1,6 +1,9 @@
-%%% @doc The learner stack: the observation vector, the fixed-shape
-%%% evaluator, the action mapping, and the sep_cma_es arm's contract.
--module(mcl_sec_trainer_learner_tests).
+%%% @doc The trainer's policy stack: the observation vector, the
+%%% fixed-shape evaluator (its outputs locked against the pre-split
+%%% net), the action mapping, and the genome's standing. The learner
+%%% arm's own tests live with the learner app
+%%% (mcl_sec_trainer_learner, mcl-sec-guard#14).
+-module(mcl_sec_trainer_stack_tests).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -57,6 +60,33 @@ the_net_is_deterministic_and_in_range_test() ->
     [?assert(O > 0 andalso O < 1)
      || O <- mcl_sec_trainer_policy_net:output(Vector, Inputs)].
 
+%% The evaluator's outputs for `sin(I/7)/3' weights on the standard
+%% stats, captured from the pre-split net (faber's activations, at
+%% 4d5539e) before they were inlined (mcl-sec-guard#14). Tolerance
+%% 1e-12: formula drift moves these by orders of magnitude more
+%% (dropping sigmoid's clamp moves a saturated output by ~4.5e-5),
+%% while platform libm noise sits far below it. The EXACT equality
+%% against faber is locked in mcl_sec_trainer_learner_tests, the
+%% faber-scoped app.
+the_standard_stats_outputs_are_locked_test() ->
+    In = mcl_sec_trainer_features:vector(base_stats(), undefined),
+    Vector = [math:sin(I / 7) / 3
+              || I <- lists:seq(1, mcl_sec_trainer_policy_net:param_count())],
+    Expected = [0.44032743766122051, 0.30437810641660384, 0.44603426742371116],
+    [?assert(abs(Actual - Want) < 1.0e-12)
+     || {Actual, Want} <- lists:zip(mcl_sec_trainer_policy_net:output(Vector, In),
+                                    Expected)].
+
+%% Pre-activations far past the clamp: faber's sigmoid clamps to
+%% [-10, 10] before the exp, so a saturated output is 1/(1+e^-10), not
+%% 1.0 — a dropped clamp differs by ~4.5e-5, far outside 1e-12.
+the_saturated_sigmoid_stays_clamped_test() ->
+    In = mcl_sec_trainer_features:vector(base_stats(), undefined),
+    Vector = lists:duplicate(mcl_sec_trainer_policy_net:param_count(), 25.0),
+    Saturated = 0.99995460213129761,
+    [?assert(abs(Output - Saturated) < 1.0e-12)
+     || Output <- mcl_sec_trainer_policy_net:output(Vector, In)].
+
 %% ---- the action mapping ----
 
 the_scalars_map_across_the_envelope_with_deadband_test() ->
@@ -100,7 +130,7 @@ a_move_inside_the_deadband_is_suppressed_test() ->
     Moved = mcl_sec_trainer_actions:moves(Stats, 0.7, 1.0, 1.0),
     ?assertEqual(7, maps:get(per_caller_max, Moved)).
 
-%% ---- the genome policy and the learner arm ----
+%% ---- the genome policy ----
 
 the_genome_policy_returns_a_valid_move_test() ->
     Vector = lists:duplicate(mcl_sec_trainer_policy_net:param_count(), 0.0),
@@ -121,20 +151,6 @@ the_champion_report_has_the_standing_shape_test() ->
                    summary := #{episodes := _, gate_failures := _}}, Report),
     ?assertEqual(8, length(maps:get(train, Report))),
     ?assertEqual(32, maps:get(episodes, maps:get(summary, Report))).
-
-sep_cma_es_returns_the_learner_contract_test() ->
-    Result = mcl_sec_trainer_learner:evolve(
-               #{scenarios => [calm], max_generations => 2,
-                 lambda => 8, init_sigma => 0.5}),
-    ?assertMatch(#{best := _, fitness := _, generations := _,
-                   evaluations := _, reason := _}, Result),
-    ?assert(is_float(maps:get(fitness, Result))).
-
-suite_fitness_is_a_float_and_rejection_scores_low_test() ->
-    Vector = lists:duplicate(mcl_sec_trainer_policy_net:param_count(), 0.0),
-    Fitness = mcl_sec_trainer_learner:suite_fitness(Vector, [calm]),
-    ?assert(is_float(Fitness)),
-    ?assert(Fitness >= -1.0 andalso Fitness =< 1.0).
 
 %% ---- helpers ----
 

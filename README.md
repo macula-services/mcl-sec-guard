@@ -27,8 +27,11 @@ guardian can do is write a bad proposal into its own log.
 
 A second OTP application, not a service: the pure simulator world, the
 eight-scenario suite, the episode runner and the versioned fitness vector —
-held to the real mcl_om guard by a conformance test. Off by default, out of
-the release until in-service training is wanted. The incumbent placeholder
+held to the real mcl_om guard by a conformance test. Off by default
+(`{mcl_sec_trainer, enabled, false}`: it boots an empty supervisor and
+starts nothing) and in the release since #16, so the console's run button
+works on the box. The learner, faber's only user, stays out in its own app:
+faber never ships, and the image build refuses it. The incumbent placeholder
 rule is scored as the baseline every genome must beat.
 
 ## The console
@@ -44,6 +47,10 @@ directions: it observes and decides nothing.
   scenario, plus the candidate-vs-incumbent diff and the fitness vector
 - `/trainer.ndjson` — the raw feed, one JSON line per episode
 - `/trainer/episode?scenario=...` — one episode's drill-down
+- `POST /api/trainer/run` — the Run evals button (phase B, #13): the
+  baseline suite, or one genome the body carries (`{"genome": [339
+  floats]}`), written as a run set and answered with a 303 to `/trainer`;
+  a 400 names a malformed body, a 409 means a run is already in flight
 
 Run sets are written by `mcl_sec_trainer_reporter` (see #21).
 

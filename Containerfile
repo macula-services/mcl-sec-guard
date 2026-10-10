@@ -47,6 +47,13 @@ COPY config ./config
 COPY apps ./apps
 RUN rebar3 as prod release
 
+# ⚠ faber never ships (#16). The release carries mcl_sec_trainer (the
+# console's run endpoint calls it) and must never carry faber: the learner,
+# faber's only user, lives in its own app that is not in this release. A
+# hard check here, so no build, CI or local, can produce a violating image.
+RUN ls _build/prod/rel/mcl_sec_guard/lib | grep -q '^mcl_sec_trainer-' \
+    && ! ls _build/prod/rel/mcl_sec_guard/lib | grep -q '^faber'
+
 FROM ghcr.io/macula-io/macula-pq-runtime:20260928-1800@sha256:a1d18c6a6a22d8d7fba6086785c683bd113828e16fdfde147d96ae67d2c6892d
 # LINKS THE PACKAGE TO THE REPOSITORY. On registries that read it, ghcr among
 # them, a package without this label is an orphan: it does not appear on the

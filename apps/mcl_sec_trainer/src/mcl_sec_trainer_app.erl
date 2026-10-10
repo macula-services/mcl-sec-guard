@@ -5,8 +5,9 @@
 %%% and stops as one unit. It is NOT a service — no release, identity,
 %%% container or health of its own — and not a "library app" either: the
 %%% executable artifact is the release, and this application ships inside
-%%% the guardian's when in-service training is wanted (it is deliberately
-%%% absent from the root relx release list until then).
+%%% the guardian's since mcl-sec-guard#16, so the console's run endpoint
+%%% works on the box (in-service training, the learner arm behind
+%%% `enabled', is still to come; faber never ships with it).
 %%%
 %%% OFF BY DEFAULT: `{mcl_sec_trainer, enabled, false}'. Offline runs use
 %%% the pure world (mcl_sec_trainer_sim) directly; no processes are needed

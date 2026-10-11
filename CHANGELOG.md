@@ -7,6 +7,14 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **The TWEANN arm (#20).** `mcl_sec_trainer_learner_tweann` evolves `faber_tweann`
+  genotypes, topology and weights, under a feedforward constraint against the same
+  episode fitness, budget and held-out seeds as the fixed-shape `sep_cma_es` arm;
+  `scripts/evolve_guardian.sh` runs either arm and persists the champion (the DAG,
+  the artifact distillation starts from).
+
 ## [0.2.1] - 2026-10-09
 
 ### Changed

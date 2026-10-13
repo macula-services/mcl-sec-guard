@@ -7,6 +7,15 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-13
+
+### Changed
+
+- **Rebuilt on macula 14.8.2 or newer** (refused dials back off further each
+  time, macula#95). This is what the v0.2.2 tag carried; that tag sits off
+  main, so 0.2.3 is the release on main (macula-fleet#22). Every version spot
+  (the three app.src files, the relx release and `info/0`) says 0.2.3.
+
 ### Added
 
 - **The TWEANN arm (#20).** `mcl_sec_trainer_learner_tweann` evolves `faber_tweann`

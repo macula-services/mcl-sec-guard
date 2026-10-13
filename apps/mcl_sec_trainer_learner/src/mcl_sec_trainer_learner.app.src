@@ -1,6 +1,6 @@
 {application, mcl_sec_trainer_learner, [
     {description, "The trainer's learner arms: sep_cma_es over the fixed shape and the TWEANN arm (faber-scoped, never in the release)"},
-    {vsn, "0.2.1"},
+    {vsn, "0.2.3"},
     %% A code container (no `mod', no supervisor): nothing starts it,
     %% and it never enters the release. faber_tweann, its only
     %% dependency, is declared in this app's own rebar.config

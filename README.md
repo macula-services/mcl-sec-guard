@@ -6,6 +6,7 @@
 [![ghcr.io](https://img.shields.io/badge/ghcr.io-macula--services%2Fmcl-sec-guard-blue.svg)](https://github.com/macula-services/mcl-sec-guard/pkgs/container/mcl-sec-guard)
 [![BEAM](https://img.shields.io/badge/beam-28%2B-A90533?logo=erlang&logoColor=white)](https://www.erlang.org)
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-support-ea4aaa.svg?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/rgfaber)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-ffdd00.svg?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/rlefever)
 
 <p align="center">
   <picture>

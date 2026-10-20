@@ -41,7 +41,20 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # REFUSED BEFORE ANYTHING IS PUSHED: a v* tag off the default branch (or off its
+  # line's release-<major>.<minor> branch), or whose version is not the one this
+  # repository publishes, stops here, so a refused tag leaves no image on the
+  # registry. Any other ref passes. attest-image checks the same again before it
+  # signs. Pinned by full commit sha, as the attest call is.
+  guard:
+    permissions:
+      contents: read
+    uses: macula-io/macula-ci-images/.github/workflows/release-guard.yml@b4c41abb404c32215a2823b7f19ac65b732e1dfe
+    with:
+      runs-on: '["ubuntu-latest"]'
+
   build-and-push:
+    needs: guard
     runs-on: ["ubuntu-latest"]
     permissions:
       contents: read

@@ -141,22 +141,22 @@ def context():
            "run sets land in trainer_runs/"])
     d.box("b-per", 770, 30, 270, 104, "Service operator", "[Person]",
           ["Deploys the release and sets", "the environment it boots with"], person=True)
-    d.box("b-sys", 400, 220, 300, 150, "mcl-sec-guard", "[mcl_om mesh service, own box]",
+    d.box("b-sys", 400, 220, 300, 150, "mcl-sec-guard", "[mcl_om mesh service]",
           ["The guardian, P0 shadow: it", "observes, proposes, records,",
            "and applies nothing. Console", "on the admin port, no auth"])
     d.box("b-ext", 60, 460, 280, 140, "Guarded services", "[External system, mesh services]",
           ["Any mesh service with mcl-om's", "inbound guard publishes",
            "denials_observed per active window"])
-    d.box("b-mac", 400, 460, 300, 120, "macula-realm", "[Macula infrastructure]",
-          ["Endorses the node's identity key", "and grants the one scope it asks",
-           "for, mcl-sec-guard"])
+    d.box("b-mac", 400, 460, 300, 136, "macula-realm", "[Macula infrastructure]",
+          ["Endorses the node's identity key", "and grants a provider authorization",
+           "for each org procedure it advertises,", "info and get_limits included"])
     d.box("b-mac", 770, 460, 270, 120, "Macula stations, mesh DHT", "[Macula infrastructure]",
           ["The pinned stations are its mesh", "entry points over QUIC; the DHT",
            "holds mcl_om's info and get_limits"])
     d.edge("M200 150V190H440V220")
     d.text("t-rel", 208, 168, "opens the console")
     d.edge("M905 134V200H660V220")
-    d.text("t-rel", 712, 168, "deploys the release, sets the env")
+    d.text("t-rel", 664, 164, "deploys the release, sets the env")
     d.edge("M550 220V140")
     d.text("t-rel", 558, 178, "writes proposals.log and run sets")
     d.edge("M200 460V420H440V370")
@@ -180,9 +180,9 @@ def components():
     d.box("b-cmp", 40, 66, 490, 120, "mcl_sec_guard_app", "[application behaviour]",
           ["start/2 calls mcl_om:boot(mcl_sec_guard_service):", "the whole service starts from this one line"],
           code=True)
-    d.box("b-cmp", 670, 66, 490, 120, "mcl_sec_guard_service", "[mcl_om_service behaviour]",
-          ["The mcl_om_service callbacks: start, stop, health,", "capabilities, identity_spec, subscriptions.",
-           "capabilities/0 is empty; mcl_om adds its open info and get_limits"], code=True)
+    d.box("b-cmp", 670, 66, 490, 136, "mcl_sec_guard_service", "[mcl_om_service behaviour]",
+          ["The mcl_om_service callbacks: start, stop, health,", "capabilities, identity_spec, subscriptions. Its",
+           "capabilities/0 is empty; mcl_om adds the open", "info and get_limits"], code=True)
     d.box("b-cmp", 40, 210, 490, 104, "mcl_sec_guard_sup", "[supervisor, one_for_one]",
           ["Two children: mcl_sec_guard_recorder and", "mcl_sec_guard_admin; 5 restarts per 10 s"],
           code=True)
@@ -224,9 +224,9 @@ def components():
     d.edge("M285 314V338"); d.text("t-rel", 293, 334, "supervises")
     d.edge("M915 186V210"); d.text("t-rel", 923, 206, "subscriptions/0")
     d.edge("M915 314V338"); d.text("t-rel", 923, 334, "hands each fact over")
-    d.edge("M670 290H620V398H530"); d.text("t-rel", 600, 390, "the proposal", anchor="middle")
+    d.edge("M670 290H640V398H530"); d.text("t-rel", 534, 390, "the proposal")
     d.edge("M530 534H670"); d.text("t-rel", 600, 526, "routes to", anchor="middle")
-    d.edge("M670 560H600V662H530"); d.text("t-rel", 552, 568, "scoreboard/1")
+    d.edge("M670 560H640V662H530"); d.text("t-rel", 534, 648, "scoreboard/1")
     d.edge("M915 586V610"); d.text("t-rel", 923, 606, "run/1, 409 while busy")
     d.edge("M915 714V738"); d.text("t-rel", 923, 734, "baseline, genome, episodes")
     d.text("t-desc", 40, 1146, "The three libraries at the bottom are linked into this release; their arrows are left out because every module above")

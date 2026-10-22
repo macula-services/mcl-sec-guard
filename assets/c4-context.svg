@@ -66,7 +66,7 @@
 <text class="t-desc" x="786" y="116">the environment it boots with</text>
 <rect class="b-sys" x="400" y="220" width="300" height="150" rx="10"/>
 <text class="t-name" x="416" y="248">mcl-sec-guard</text>
-<text class="t-type" x="416" y="266">[mcl_om mesh service, own box]</text>
+<text class="t-type" x="416" y="266">[mcl_om mesh service]</text>
 <text class="t-desc" x="416" y="290">The guardian, P0 shadow: it</text>
 <text class="t-desc" x="416" y="306">observes, proposes, records,</text>
 <text class="t-desc" x="416" y="322">and applies nothing. Console</text>
@@ -77,12 +77,13 @@
 <text class="t-desc" x="76" y="530">Any mesh service with mcl-om's</text>
 <text class="t-desc" x="76" y="546">inbound guard publishes</text>
 <text class="t-desc" x="76" y="562">denials_observed per active window</text>
-<rect class="b-mac" x="400" y="460" width="300" height="120" rx="10"/>
+<rect class="b-mac" x="400" y="460" width="300" height="136" rx="10"/>
 <text class="t-name" x="416" y="488">macula-realm</text>
 <text class="t-type" x="416" y="506">[Macula infrastructure]</text>
 <text class="t-desc" x="416" y="530">Endorses the node's identity key</text>
-<text class="t-desc" x="416" y="546">and grants the one scope it asks</text>
-<text class="t-desc" x="416" y="562">for, mcl-sec-guard</text>
+<text class="t-desc" x="416" y="546">and grants a provider authorization</text>
+<text class="t-desc" x="416" y="562">for each org procedure it advertises,</text>
+<text class="t-desc" x="416" y="578">info and get_limits included</text>
 <rect class="b-mac" x="770" y="460" width="270" height="120" rx="10"/>
 <text class="t-name" x="786" y="488">Macula stations, mesh DHT</text>
 <text class="t-type" x="786" y="506">[Macula infrastructure]</text>
@@ -92,7 +93,7 @@
 <path class="edge" d="M200 150V190H440V220" marker-end="url(#a)"/>
 <text class="t-rel" x="208" y="168">opens the console</text>
 <path class="edge" d="M905 134V200H660V220" marker-end="url(#a)"/>
-<text class="t-rel" x="712" y="168">deploys the release, sets the env</text>
+<text class="t-rel" x="664" y="164">deploys the release, sets the env</text>
 <path class="edge" d="M550 220V140" marker-end="url(#a)"/>
 <text class="t-rel" x="558" y="178">writes proposals.log and run sets</text>
 <path class="edge" d="M200 460V420H440V370" marker-end="url(#a)"/>

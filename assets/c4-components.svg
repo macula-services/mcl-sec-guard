@@ -52,12 +52,13 @@
 <text class="t-type" x="56" y="112">[application behaviour]</text>
 <text class="t-desc" x="56" y="136">start/2 calls mcl_om:boot(mcl_sec_guard_service):</text>
 <text class="t-desc" x="56" y="152">the whole service starts from this one line</text>
-<rect class="b-cmp" x="670" y="66" width="490" height="120" rx="10"/>
+<rect class="b-cmp" x="670" y="66" width="490" height="136" rx="10"/>
 <text class="t-code" x="686" y="94">mcl_sec_guard_service</text>
 <text class="t-type" x="686" y="112">[mcl_om_service behaviour]</text>
 <text class="t-desc" x="686" y="136">The mcl_om_service callbacks: start, stop, health,</text>
-<text class="t-desc" x="686" y="152">capabilities, identity_spec, subscriptions.</text>
-<text class="t-desc" x="686" y="168">capabilities/0 is empty; mcl_om adds its open info and get_limits</text>
+<text class="t-desc" x="686" y="152">capabilities, identity_spec, subscriptions. Its</text>
+<text class="t-desc" x="686" y="168">capabilities/0 is empty; mcl_om adds the open</text>
+<text class="t-desc" x="686" y="184">info and get_limits</text>
 <rect class="b-cmp" x="40" y="210" width="490" height="104" rx="10"/>
 <text class="t-code" x="56" y="238">mcl_sec_guard_sup</text>
 <text class="t-type" x="56" y="256">[supervisor, one_for_one]</text>
@@ -135,12 +136,12 @@
 <text class="t-rel" x="923" y="206">subscriptions/0</text>
 <path class="edge" d="M915 314V338" marker-end="url(#a)"/>
 <text class="t-rel" x="923" y="334">hands each fact over</text>
-<path class="edge" d="M670 290H620V398H530" marker-end="url(#a)"/>
-<text class="t-rel" x="600" y="390" text-anchor="middle">the proposal</text>
+<path class="edge" d="M670 290H640V398H530" marker-end="url(#a)"/>
+<text class="t-rel" x="534" y="390">the proposal</text>
 <path class="edge" d="M530 534H670" marker-end="url(#a)"/>
 <text class="t-rel" x="600" y="526" text-anchor="middle">routes to</text>
-<path class="edge" d="M670 560H600V662H530" marker-end="url(#a)"/>
-<text class="t-rel" x="552" y="568">scoreboard/1</text>
+<path class="edge" d="M670 560H640V662H530" marker-end="url(#a)"/>
+<text class="t-rel" x="534" y="648">scoreboard/1</text>
 <path class="edge" d="M915 586V610" marker-end="url(#a)"/>
 <text class="t-rel" x="923" y="606">run/1, 409 while busy</text>
 <path class="edge" d="M915 714V738" marker-end="url(#a)"/>

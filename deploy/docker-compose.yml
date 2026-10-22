@@ -29,17 +29,16 @@ services:
       # ⚠ THE SERVICE'S IDENTITY LIVES HERE. mcl_om generates the node key on
       # first boot and loads it on every boot after. The image declares this
       # path a VOLUME, and with nothing mounted docker gives each new container
-      # a fresh anonymous one, so every recreate (watchtower does them as
-      # routine) would mint a new node id while the service looks healthy.
+      # a fresh anonymous one, so every recreate would mint a new node id while
+      # the service looks healthy.
       - secrets:/etc/mcl/secrets
-      # THE PROPOSAL LOG'S VOLUME, and it is why the path above can be a path.
+      # THE PROPOSAL LOG'S VOLUME, and it is why the path below can be a path.
       # The image declares no data volume of its own -- its Containerfile says
       # the scaffold writes nothing else yet -- but the recorder does write, one
       # line per denied window, and a log inside the container dies with it.
       - data:/var/lib/mcl-sec-guard
     labels:
-      # Only meaningful if you run watchtower: it pulls a new :latest and
-      # recreates the container. Harmless otherwise.
+      # Only meaningful if you run watchtower yourself. Harmless otherwise.
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       # No default. A service that guesses its realm announces itself where
@@ -63,7 +62,7 @@ services:
       - MCL_COOKIE=mcl_sec_guard
       # The alert topic the guardian subscribes to, and where the trainer's
       # run-set artifacts land (the console renders them). The run sets are a
-      # DIRECTORY, and it belongs on the data volume below like the proposal log:
+      # DIRECTORY, and it belongs on the data volume above like the proposal log:
       # a directory under /app is the container's own filesystem and dies at the
       # next recreate, which for a run set the console is still serving is the
       # same silent loss (Terra, sg34 r1).
@@ -75,10 +74,10 @@ services:
       # "the service knows its own port" is the point of this file.
       - MCL_SEC_GUARD_ADMIN_PORT=${MCL_SEC_GUARD_ADMIN_PORT:-8458}
       # Where proposals land, one line per window with denials. The path is ON
-      # THE DATA VOLUME MOUNTED BELOW: pointing it at /var/lib/... with nothing
-      # mounted there would lose the log at every recreate (watchtower does them
-      # as routine) while the container looks healthy, which is worse than the
-      # missing port this file used to have (mcl-sec-guard#34).
+      # THE DATA VOLUME MOUNTED ABOVE: pointing it at /var/lib/... with nothing
+      # mounted there would lose the log at every recreate while the container
+      # looks healthy, which is worse than the missing port this file used to
+      # have (mcl-sec-guard#34).
       - MCL_SEC_GUARD_PROPOSAL_LOG=${MCL_SEC_GUARD_PROPOSAL_LOG:-/var/lib/mcl-sec-guard/proposals.log}
       # Labels on the claim this service sends the realm at boot, which the
       # realm's operator sees on the pending row: what is asking, and from

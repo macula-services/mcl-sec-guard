@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1260" role="img" aria-label="mcl-sec-guard components">
+<title>mcl-sec-guard components</title>
+<style>
+.t-name { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; }
+.t-desc { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 12.5px; }
+.t-rel { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 11.5px; paint-order: stroke; stroke-width: 4px; stroke-linejoin: round; }
+.t-code { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 600; }
+.t-type { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; }
+.t-bound { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; }
+.t-leg { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 12px; }
+.edge { fill: none; stroke-width: 1.25; }
+.edge-later { fill: none; stroke-width: 1.25; stroke-dasharray: 5 4; }
+.bg { fill: #FFFFFF; }
+.b-sys { fill: #F5E9CC; stroke: #A56F0A; stroke-width: 2; }
+.b-per { fill: #E3EBF2; stroke: #3B5B7A; stroke-width: 1.25; }
+.b-mac { fill: #E6E4EE; stroke: #5E5A78; stroke-width: 1.25; }
+.b-ext { fill: #ECEFED; stroke: #8A9791; stroke-width: 1.25; }
+.b-cmp { fill: #FFFFFF; stroke: #8A9791; stroke-width: 1.25; }
+.b-later { fill: none; stroke: #8A9791; stroke-width: 1.25; stroke-dasharray: 5 4; }
+.bound { fill: none; stroke: #B3BDB8; stroke-width: 1; }
+.head { fill: #3B5B7A; }
+.t-name, .t-code { fill: #16201D; }
+.t-type, .t-bound, .t-leg { fill: #66736E; }
+.t-desc { fill: #34413C; }
+.t-rel { fill: #66736E; stroke: #FFFFFF; }
+.edge, .edge-later { stroke: #8A9791; }
+.arrowhead { fill: #8A9791; }
+@media (prefers-color-scheme: dark) {
+.bg { fill: #171F1C; }
+.b-sys { fill: #3A2E13; stroke: #E3AA3C; }
+.b-per { fill: #1D2A36; stroke: #8EB4D8; }
+.b-mac { fill: #26243A; stroke: #A9A4C8; }
+.b-ext { fill: #1C2421; stroke: #7D8B85; }
+.b-cmp { fill: #171F1C; stroke: #7D8B85; }
+.b-later { stroke: #7D8B85; }
+.bound { stroke: #4A5752; }
+.head { fill: #8EB4D8; }
+.t-name, .t-code { fill: #E6ECE9; }
+.t-type, .t-bound, .t-leg { fill: #93A09A; }
+.t-desc { fill: #C3CDC8; }
+.t-rel { fill: #93A09A; stroke: #171F1C; }
+.edge, .edge-later { stroke: #7D8B85; }
+.arrowhead { fill: #7D8B85; }
+}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bg" x="0" y="0" width="1200" height="1260"/>
+<rect class="bound" x="16" y="40" width="1168" height="954" rx="12"/>
+<text class="t-bound" x="32" y="62">mcl-sec-guard [Container: one OTP release]</text>
+<rect class="b-cmp" x="40" y="66" width="490" height="120" rx="10"/>
+<text class="t-code" x="56" y="94">mcl_sec_guard_app</text>
+<text class="t-type" x="56" y="112">[application behaviour]</text>
+<text class="t-desc" x="56" y="136">start/2 calls mcl_om:boot(mcl_sec_guard_service):</text>
+<text class="t-desc" x="56" y="152">the whole service starts from this one line</text>
+<rect class="b-cmp" x="670" y="66" width="490" height="120" rx="10"/>
+<text class="t-code" x="686" y="94">mcl_sec_guard_service</text>
+<text class="t-type" x="686" y="112">[mcl_om_service behaviour]</text>
+<text class="t-desc" x="686" y="136">info, start, stop, health, capabilities,</text>
+<text class="t-desc" x="686" y="152">identity_spec, subscriptions. capabilities/0</text>
+<text class="t-desc" x="686" y="168">is []; mcl_om adds info and get_limits</text>
+<rect class="b-cmp" x="40" y="210" width="490" height="104" rx="10"/>
+<text class="t-code" x="56" y="238">mcl_sec_guard_sup</text>
+<text class="t-type" x="56" y="256">[supervisor, one_for_one]</text>
+<text class="t-desc" x="56" y="280">Two children: mcl_sec_guard_recorder and</text>
+<text class="t-desc" x="56" y="296">mcl_sec_guard_admin; 5 restarts per 10 s</text>
+<rect class="b-cmp" x="670" y="210" width="490" height="104" rx="10"/>
+<text class="t-code" x="686" y="238">mcl_sec_guard_subscriber</text>
+<text class="t-type" x="686" y="256">[macula_subscriber behaviour]</text>
+<text class="t-desc" x="686" y="280">handle_event/4: decodes the fact, asks the</text>
+<text class="t-desc" x="686" y="296">proposer, hands a proposal to the recorder</text>
+<rect class="b-cmp" x="40" y="338" width="490" height="120" rx="10"/>
+<text class="t-code" x="56" y="366">mcl_sec_guard_recorder</text>
+<text class="t-type" x="56" y="384">[gen_server, append-only]</text>
+<text class="t-desc" x="56" y="408">One ~0p line per proposal, written</text>
+<text class="t-desc" x="56" y="424">synchronously so lines never interleave;</text>
+<text class="t-desc" x="56" y="440">the file is opened append at start</text>
+<rect class="b-cmp" x="670" y="338" width="490" height="120" rx="10"/>
+<text class="t-code" x="686" y="366">mcl_sec_guard_proposer</text>
+<text class="t-type" x="686" y="384">[behaviour and the P0 rule]</text>
+<text class="t-desc" x="686" y="408">propose/1 dispatches to the module named in</text>
+<text class="t-desc" x="686" y="424">{mcl_sec_guard, proposer}; the rule lowers</text>
+<text class="t-desc" x="686" y="440">per_caller_max to the over-limit count</text>
+<rect class="b-cmp" x="40" y="482" width="490" height="104" rx="10"/>
+<text class="t-code" x="56" y="510">mcl_sec_guard_admin</text>
+<text class="t-type" x="56" y="528">[ranch listener, 0.0.0.0]</text>
+<text class="t-desc" x="56" y="552">Listens on the port</text>
+<text class="t-desc" x="56" y="568">MCL_SEC_GUARD_ADMIN_PORT names; no authentication</text>
+<rect class="b-cmp" x="670" y="482" width="490" height="104" rx="10"/>
+<text class="t-code" x="686" y="510">mcl_sec_guard_admin_handler</text>
+<text class="t-type" x="686" y="528">[cowboy handler, the console]</text>
+<text class="t-desc" x="686" y="552">/, /proposals.ndjson, /trainer, /trainer.ndjson,</text>
+<text class="t-desc" x="686" y="568">/trainer/episode, POST /api/trainer/run</text>
+<rect class="b-cmp" x="40" y="610" width="490" height="104" rx="10"/>
+<text class="t-code" x="56" y="638">mcl_sec_guard_trainer_view</text>
+<text class="t-type" x="56" y="656">[pure reader]</text>
+<text class="t-desc" x="56" y="680">read_run_sets/1 file:consults the term files;</text>
+<text class="t-desc" x="56" y="696">scoreboard/1 formats the list it is given</text>
+<rect class="b-cmp" x="670" y="610" width="490" height="104" rx="10"/>
+<text class="t-code" x="686" y="638">mcl_sec_guard_trainer_api</text>
+<text class="t-type" x="686" y="656">[the run endpoint's other half]</text>
+<text class="t-desc" x="686" y="680">run/1: the baseline or one genome, one run</text>
+<text class="t-desc" x="686" y="696">at a time; a second call is 409</text>
+<rect class="b-cmp" x="40" y="738" width="1120" height="104" rx="10"/>
+<text class="t-code" x="56" y="766">mcl_sec_trainer</text>
+<text class="t-type" x="56" y="784">[second OTP application, in the release, off by default]</text>
+<text class="t-desc" x="56" y="808">The pure simulator, the eight scenarios, the episode runner and fitness vector, and mcl_sec_trainer_reporter:</text>
+<text class="t-desc" x="56" y="824">the term files it writes are the only bridge between the trainer and the console, which never loads it.</text>
+<rect class="b-mac" x="40" y="866" width="360" height="104" rx="10"/>
+<text class="t-code" x="56" y="894">mcl_om</text>
+<text class="t-type" x="56" y="912">[library, ~&gt; 1.4]</text>
+<text class="t-desc" x="56" y="936">boot/1 wires mesh, identity, health and one</text>
+<text class="t-desc" x="56" y="952">subscriber per declared topic</text>
+<rect class="b-mac" x="420" y="866" width="360" height="104" rx="10"/>
+<text class="t-code" x="436" y="894">macula</text>
+<text class="t-type" x="436" y="912">[library, ~&gt; 16.0]</text>
+<text class="t-desc" x="436" y="936">QUIC transport, subscriber behaviour,</text>
+<text class="t-desc" x="436" y="952">decode_payload/1, the signed DHT records</text>
+<rect class="b-mac" x="800" y="866" width="360" height="104" rx="10"/>
+<text class="t-code" x="816" y="894">jsx, ranch, cowboy</text>
+<text class="t-type" x="816" y="912">[jsx direct; ranch, cowboy via mcl_om]</text>
+<text class="t-desc" x="816" y="936">jsx encodes the console's JSON; ranch and</text>
+<text class="t-desc" x="816" y="952">cowboy carry the admin listener</text>
+<rect class="b-ext" x="40" y="1024" width="1120" height="104" rx="10"/>
+<text class="t-code" x="56" y="1052">the host environment</text>
+<text class="t-type" x="56" y="1070">[environment, read at boot; no secret here]</text>
+<text class="t-desc" x="56" y="1094">MCL_SEC_GUARD_ADMIN_PORT, MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;</text>
+<text class="t-desc" x="56" y="1110">MCL_REALM, MCL_REALM_KEY and the station pins are read by mcl_om, not by these modules</text>
+<path class="edge" d="M530 126H670" marker-end="url(#a)"/>
+<text class="t-rel" x="600" y="118" text-anchor="middle">boots</text>
+<path class="edge" d="M670 160H600V262H530" marker-end="url(#a)"/>
+<text class="t-rel" x="592" y="216" text-anchor="end">start/1</text>
+<path class="edge" d="M285 314V338" marker-end="url(#a)"/>
+<text class="t-rel" x="293" y="334">supervises</text>
+<path class="edge" d="M915 186V210" marker-end="url(#a)"/>
+<text class="t-rel" x="923" y="206">subscriptions/0</text>
+<path class="edge" d="M915 314V338" marker-end="url(#a)"/>
+<text class="t-rel" x="923" y="334">hands each fact over</text>
+<path class="edge" d="M670 290H620V398H530" marker-end="url(#a)"/>
+<text class="t-rel" x="600" y="390" text-anchor="middle">the proposal</text>
+<path class="edge" d="M530 534H670" marker-end="url(#a)"/>
+<text class="t-rel" x="600" y="526" text-anchor="middle">routes to</text>
+<path class="edge" d="M670 560H600V662H530" marker-end="url(#a)"/>
+<text class="t-rel" x="552" y="568">scoreboard/1</text>
+<path class="edge" d="M915 586V610" marker-end="url(#a)"/>
+<text class="t-rel" x="923" y="606">run/1, 409 while busy</text>
+<path class="edge" d="M915 714V738" marker-end="url(#a)"/>
+<text class="t-rel" x="923" y="734">baseline, genome, episodes</text>
+<text class="t-desc" x="40" y="1146">The three libraries at the bottom are linked into this release; their arrows are left out because every module above</text>
+<text class="t-desc" x="40" y="1164">reaches the mesh through mcl_om, and the console is the only caller of jsx. mcl_sec_trainer is in the release since</text>
+<text class="t-desc" x="40" y="1182">#16, but faber is not, and the Containerfile refuses a build whose release carries it.</text>
+<rect class="b-sys" x="24" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="54" y="1232">In scope</text>
+<rect class="b-per" x="110.8" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="140.8" y="1232">Person</text>
+<rect class="b-mac" x="184.39999999999998" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="214.39999999999998" y="1232">Macula infrastructure</text>
+<rect class="b-ext" x="357.0" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="387.0" y="1232">External system</text>
+<rect class="b-cmp" x="490.0" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="520.0" y="1232">Container or component</text>
+<rect class="bound" x="669.2" y="1220" width="22" height="14" rx="3"/>
+<text class="t-leg" x="699.2" y="1232">Boundary</text>
+</svg>

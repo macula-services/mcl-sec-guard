@@ -28,7 +28,8 @@ mcl-om and documented there, in
 
 The service observes, proposes and records — it applies nothing. No guardian
 tier, no `set_limits` anywhere in its namespace; the worst a compromised P0
-guardian can do is write a bad proposal into its own log.
+guardian can do is write a bad proposal into its own log, or a run set into its
+own run directory.
 
 - **Sense:** subscribes to `denials_observed` (the alert facts guarded
   services publish once per window with activity, mcl-om#13).
@@ -52,9 +53,10 @@ rule is scored as the baseline every genome must beat.
 
 ## The console
 
-The LAN admin UI (`MCL_SEC_GUARD_ADMIN_PORT`, default 8458, every
-interface, no auth — the dev-fleet posture), an audit window in both
-directions: it observes and decides nothing.
+The LAN admin UI (the port `MCL_SEC_GUARD_ADMIN_PORT` names, every
+interface, no auth: the dev-fleet posture), an audit window in both
+directions: it renders the log and the run sets, and its run button writes a
+run set. It decides nothing.
 
 - `/` — the proposal log
 - `/proposals.ndjson` — the log raw

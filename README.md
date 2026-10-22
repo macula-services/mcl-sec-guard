@@ -52,7 +52,7 @@ rule is scored as the baseline every genome must beat.
 
 ## The console
 
-The LAN admin UI (`MCL_SEC_GUARD_ADMIN_PORT`, which has no default, every
+The LAN admin UI (the port `MCL_SEC_GUARD_ADMIN_PORT` names, every
 interface, no auth: the dev-fleet posture), an audit window in both
 directions: it renders the log and the run sets, and its run button writes a
 run set. It decides nothing.

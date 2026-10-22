@@ -196,7 +196,7 @@ def components():
           ["propose/1 dispatches to the module named in", "{mcl_sec_guard, proposer}; the rule lowers",
            "per_caller_max to the over-limit count"], code=True)
     d.box("b-cmp", 40, 482, 490, 104, "mcl_sec_guard_admin", "[ranch listener, 0.0.0.0]",
-          ["Listens on MCL_SEC_GUARD_ADMIN_PORT,", "which has no default; no authentication"], code=True)
+          ["Listens on the port", "MCL_SEC_GUARD_ADMIN_PORT names; no authentication"], code=True)
     d.box("b-cmp", 670, 482, 490, 104, "mcl_sec_guard_admin_handler", "[cowboy handler, the console]",
           ["/, /proposals.ndjson, /trainer, /trainer.ndjson,", "/trainer/episode, POST /api/trainer/run"],
           code=True)
@@ -217,7 +217,7 @@ def components():
     d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[jsx declared directly; ranch and cowboy through mcl_om]",
           ["jsx encodes the console's JSON; ranch and", "cowboy carry the admin listener"], code=True)
     d.box("b-ext", 40, 1024, 1120, 104, "the host environment", "[environment, read at boot; no secret here]",
-          ["MCL_SEC_GUARD_ADMIN_PORT (no default), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;",
+          ["MCL_SEC_GUARD_ADMIN_PORT, MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;",
            "MCL_REALM, MCL_REALM_KEY and the station pins are read by mcl_om, not by these modules"], code=True)
     d.edge("M530 126H670"); d.text("t-rel", 600, 118, "boots", anchor="middle")
     d.edge("M670 160H600V262H530"); d.text("t-rel", 592, 216, "start/1", anchor="end")

@@ -18,7 +18,7 @@ writes the log; they are the only two writers.
 
 | Element | Kind | Role |
 | --- | --- | --- |
-| mcl-sec-guard | In scope | One OTP release in one container, an `mcl_om` mesh service on its own box. Subscribes to `denials_observed`, records a proposal per hot window, and serves the console on `MCL_SEC_GUARD_ADMIN_PORT`, which has no default |
+| mcl-sec-guard | In scope | One OTP release in one container, an `mcl_om` mesh service on its own box. Subscribes to `denials_observed`, records a proposal per hot window, and serves the console on the port `MCL_SEC_GUARD_ADMIN_PORT` names |
 | Security reviewer | Person | Opens `/` for the proposal log and `/trainer` for the scoreboard, and can start an evaluation from the run button. Decides nothing here: P0 has no apply path |
 | Service operator | Person | Runs the box, deploys the release, and supplies the realm, key and station pins the release boots with |
 | proposals.log and run sets | Files inside the container | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS`. The image declares no data volume, so both live and die with the container |
@@ -44,7 +44,7 @@ and nothing else.
 | `mcl_sec_guard_subscriber` | `macula_subscriber` behaviour | `handle_event/4` decodes the fact, asks the proposer, stamps the verified publisher's node id and sequence onto the proposal, and hands it to the recorder |
 | `mcl_sec_guard_proposer` | behaviour, plus the P0 rule | `propose/1` dispatches to the module named in `{mcl_sec_guard, proposer}`. `mcl_sec_guard_proposer_rule` proposes lowering `per_caller_max` to the over-limit count, and nothing else |
 | `mcl_sec_guard_recorder` | `gen_server`, append-only | Opens the log append at start and writes one `~0p` line per proposal synchronously, so lines never interleave. It crashes on an unwritable log rather than dropping proposals quietly |
-| `mcl_sec_guard_admin` | ranch listener, `0.0.0.0` | Listens on `MCL_SEC_GUARD_ADMIN_PORT`, which has no default, with no authentication, the dev-fleet posture |
+| `mcl_sec_guard_admin` | ranch listener, `0.0.0.0` | Listens on the port `MCL_SEC_GUARD_ADMIN_PORT` names, with no authentication, the dev-fleet posture |
 | `mcl_sec_guard_admin_handler` | cowboy handler, the console | `GET /`, `/proposals.ndjson`, `/trainer`, `/trainer.ndjson`, `/trainer/episode`, and `POST /api/trainer/run`; everything else is a 404 |
 | `mcl_sec_guard_trainer_view` | pure reader | `read_run_sets/1` `file:consult/1`s the reporter's term files; `scoreboard/1` only formats the list it is handed. It loads no trainer module, which is why the console works with the trainer absent |
 | `mcl_sec_guard_trainer_api` | the run endpoint's other half | `run/1` evaluates the baseline or one genome, one run at a time: a second call in flight returns `run_in_progress`, which the handler maps to 409 |

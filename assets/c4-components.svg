@@ -83,8 +83,8 @@
 <rect class="b-cmp" x="40" y="482" width="490" height="104" rx="10"/>
 <text class="t-code" x="56" y="510">mcl_sec_guard_admin</text>
 <text class="t-type" x="56" y="528">[ranch listener, 0.0.0.0]</text>
-<text class="t-desc" x="56" y="552">Listens on MCL_SEC_GUARD_ADMIN_PORT,</text>
-<text class="t-desc" x="56" y="568">which has no default; no authentication</text>
+<text class="t-desc" x="56" y="552">Listens on the port</text>
+<text class="t-desc" x="56" y="568">MCL_SEC_GUARD_ADMIN_PORT names; no authentication</text>
 <rect class="b-cmp" x="670" y="482" width="490" height="104" rx="10"/>
 <text class="t-code" x="686" y="510">mcl_sec_guard_admin_handler</text>
 <text class="t-type" x="686" y="528">[cowboy handler, the console]</text>
@@ -123,7 +123,7 @@
 <rect class="b-ext" x="40" y="1024" width="1120" height="104" rx="10"/>
 <text class="t-code" x="56" y="1052">the host environment</text>
 <text class="t-type" x="56" y="1070">[environment, read at boot; no secret here]</text>
-<text class="t-desc" x="56" y="1094">MCL_SEC_GUARD_ADMIN_PORT (no default), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;</text>
+<text class="t-desc" x="56" y="1094">MCL_SEC_GUARD_ADMIN_PORT, MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;</text>
 <text class="t-desc" x="56" y="1110">MCL_REALM, MCL_REALM_KEY and the station pins are read by mcl_om, not by these modules</text>
 <path class="edge" d="M530 126H670" marker-end="url(#a)"/>
 <text class="t-rel" x="600" y="118" text-anchor="middle">boots</text>

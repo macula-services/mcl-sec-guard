@@ -5,7 +5,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.3.0 - 2026-10-17
+## Unreleased
+
+- **The base library is macula 16** (macula-codebase-checks#4): the macula floor moves
+  `~> 15.6` to `~> 16.0`, and `mcl_om` to `~> 1.4`, the release whose own base is
+  macula 16. 16.0 keeps wire 1.0, so this service still speaks to every wire 1.0 box;
+  what it adds is the revocation bound (macula#118): an endorsement admits its holder
+  for at most 24 hours, and a gated overlay context must pass `member_standing`. This
+  service gates no overlay and issues no endorsement.
 
 - wire 1.0: on macula 15.6 / mcl_om 1.0 (macula-io/macula#105). A wire 1.0 node and a 0.10.3-fleet node do not interoperate, so this release reaches a box only on the flag day (macula-io/macula-fleet#27).
 
@@ -79,7 +86,6 @@ against mcl_om 0.37.6 and macula 13.5.0, the newest the constraints float to.
 
 - **mcl_om floor rides 0.37.6**: windowed denial counters (a quiet window
   publishes nothing) and the max_distinct_callers flood bound.
-
 
 - **mcl_om floor 0.37.3**: stats carry hex-encoded caller ids (wire-clean; the
   previous images returned unknown_error from get_limits).

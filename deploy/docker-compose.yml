@@ -32,6 +32,11 @@ services:
       # a fresh anonymous one, so every recreate (watchtower does them as
       # routine) would mint a new node id while the service looks healthy.
       - secrets:/etc/mcl/secrets
+      # THE PROPOSAL LOG'S VOLUME, and it is why the path above can be a path.
+      # The image declares no data volume of its own -- its Containerfile says
+      # the scaffold writes nothing else yet -- but the recorder does write, one
+      # line per denied window, and a log inside the container dies with it.
+      - data:/var/lib/mcl-sec-guard
     labels:
       # Only meaningful if you run watchtower: it pulls a new :latest and
       # recreates the container. Harmless otherwise.
@@ -61,6 +66,17 @@ services:
       # point this at the persistent data volume in placement config).
       - MCL_SEC_GUARD_ALERT_TOPIC=denials_observed
       - MCL_SEC_GUARD_TRAINER_RUNS=${MCL_SEC_GUARD_TRAINER_RUNS:-trainer_runs}
+      # The admin console's port: 8458 is what mcl_sec_guard_admin:port/0 chooses
+      # and what macula-fleet's edge/scripts/docker-compose.mcl-sec-guard.yml
+      # sets. Named here rather than left to the release's own fallback, because
+      # "the service knows its own port" is the point of this file.
+      - MCL_SEC_GUARD_ADMIN_PORT=${MCL_SEC_GUARD_ADMIN_PORT:-8458}
+      # Where proposals land, one line per window with denials. The path is ON
+      # THE DATA VOLUME MOUNTED BELOW: pointing it at /var/lib/... with nothing
+      # mounted there would lose the log at every recreate (watchtower does them
+      # as routine) while the container looks healthy, which is worse than the
+      # missing port this file used to have (mcl-sec-guard#34).
+      - MCL_SEC_GUARD_PROPOSAL_LOG=${MCL_SEC_GUARD_PROPOSAL_LOG:-/var/lib/mcl-sec-guard/proposals.log}
       # Labels on the claim this service sends the realm at boot, which the
       # realm's operator sees on the pending row: what is asking, and from
       # which box. MCL_BOX comes from the host that deploys it.
@@ -73,3 +89,7 @@ services:
 volumes:
   secrets:
     name: mcl-sec-guard-secrets
+  # Same reasoning: named here so a `docker compose -p' with another project
+  # name keeps the proposal log rather than starting a second, empty one.
+  data:
+    name: mcl-sec-guard-data

@@ -2,6 +2,14 @@
 %% start with a malformed term. That is the correct failure: a service with a
 %% half-configured realm announces itself where nobody can attribute it, which
 %% looks exactly like a healthy node.
+%%
+%% So a variable only goes in without a default when the service genuinely
+%% cannot work without it: the four mesh ones below, which mcl_om already
+%% refuses to boot without. Everything the CODE already chooses a sane default
+%% for carries that default here instead -- relx's `${VAR:-default}' -- because
+%% an unset `${VAR}' is substituted with the EMPTY STRING, so an unquoted one is
+%% not even a term and the node never starts while a quoted one silently becomes
+%% "" (mcl-sec-guard#34).
 [
     {mcl_om, [
         %% Without this, mcl_om_identity:load_node_key/0 returns `undefined'
@@ -100,8 +108,10 @@
         %% The alert topic every guarded service publishes one
         %% `denials_observed' fact on per window with activity (mcl-om#13).
         {alert_topic,   <<"${MCL_SEC_GUARD_ALERT_TOPIC}">>},
-        %% Where proposals land, one ~0p line each.
-        {proposal_log,  "${MCL_SEC_GUARD_PROPOSAL_LOG}"},
+        %% Where proposals land, one ~0p line each. The fallback is the
+        %% recorder's own default (mcl_sec_guard_recorder:path/0), so a boot
+        %% that sets nothing still records somewhere rather than into "".
+        {proposal_log,  "${MCL_SEC_GUARD_PROPOSAL_LOG:-proposals.log}"},
         %% Where the trainer's run-set artifacts land; the console
         %% renders them. The deploy points this at the persistent data
         %% volume; the default keeps dev boots working.
@@ -109,8 +119,11 @@
         %% The decision seam: the placeholder rule in P0, the
         %% model-backed proposer later.
         {proposer,      mcl_sec_guard_proposer_rule},
-        %% The admin console: binds 0.0.0.0, no auth (dev-fleet posture).
-        {admin_port,    ${MCL_SEC_GUARD_ADMIN_PORT}}
+        %% The admin console: binds 0.0.0.0, no auth (dev-fleet posture). The
+        %% fallback is mcl_sec_guard_admin:port/0's, and it has to be here: an
+        %% unquoted ${...} with nothing to put in it is not a term, so the node
+        %% refuses to start at all (mcl-sec-guard#34).
+        {admin_port,    ${MCL_SEC_GUARD_ADMIN_PORT:-8458}}
     ]},
     {kernel, [{logger_level, info}]}
 ].

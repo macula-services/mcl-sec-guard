@@ -46,6 +46,33 @@ proposal_log_is_the_fleet_path_test() ->
     ?assertEqual("/var/lib/mcl-sec-guard/proposals.log",
                  proplists:get_value(proposal_log, sec_guard_env())).
 
+%% And the same argument as the proposal log: a path outside the volume is a
+%% directory that dies with the container (Terra, sg34 r1 R2).
+trainer_runs_is_on_the_shared_volume_test() ->
+    ?assertEqual("/var/lib/mcl-sec-guard/trainer_runs",
+                 proplists:get_value(trainer_runs, sec_guard_env())).
+
+%% The release must not demand what the service can choose for itself. With
+%% nothing optional set -- only the two variables the header insists on -- every
+%% one of these has to be the default its own module already picks, because the
+%% alternative is a key the config demands that the code never needed.
+code_defaults_test() ->
+    Config = parse_term(flat(substitute(read("config/sys.config.src"), required_env()))),
+    ?assertEqual([{alert_topic, <<"denials_observed">>},
+                  {proposal_log, "proposals.log"},
+                  {trainer_runs, "trainer_runs"},
+                  {proposer, mcl_sec_guard_proposer_rule},
+                  {admin_port, 8458}],
+                 proplists:get_value(mcl_sec_guard, Config)).
+
+%% The mechanical version of the header's promise: a placeholder with no default
+%% is one the compose has to supply, so the next person to add a requirement to
+%% sys.config.src cannot forget the file that runs it.
+every_placeholder_without_a_default_is_supplied_test() ->
+    Supplied = compose_env(),
+    ?assertEqual([], [Spec || Spec <- bare_placeholders(read("config/sys.config.src")),
+                              not maps:is_key(list_to_binary(Spec), Supplied)]).
+
 parsed_config() ->
     parse_term(flat(substitute(read("config/sys.config.src"), compose_env()))).
 
@@ -128,9 +155,29 @@ flat(Text) ->
     unicode:characters_to_list(Text).
 
 placeholders(Template) ->
-    case re:run(Template, "\\$\\{([^}]*)\\}", [global, {capture, all, list}]) of
+    ["${" ++ Spec ++ "}" || Spec <- placeholder_specs(Template)].
+
+placeholder_specs(Text) ->
+    case re:run(Text, "\\$\\{([^}]*)\\}", [global, {capture, all, list}]) of
         nomatch -> [];
-        {match, Matches} -> [Whole || [Whole, _Spec] <- Matches]
+        {match, Matches} -> [Spec || [_Whole, Spec] <- Matches]
+    end.
+
+%% Every placeholder that carries no `:-' fallback, ignoring the ones named in
+%% comments (this file documents the syntax, and documentation is not a demand).
+%% A `%' inside a quoted string would be misread as a comment start; none of the
+%% strings in sys.config.src contain one, and a test does not get to guess twice.
+bare_placeholders(Template) ->
+    [Spec || Spec <- placeholder_specs(strip_comments(Template)),
+             not lists:member($:, Spec)].
+
+strip_comments(Template) ->
+    lists:join("\n", [code_part(Line) || Line <- string:split(Template, "\n", all)]).
+
+code_part(Line) ->
+    case string:split(Line, "%", leading) of
+        [Code, _Comment] -> Code;
+        [Code] -> Code
     end.
 
 os_value("${" ++ Rest, Env) ->

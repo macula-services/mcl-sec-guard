@@ -61,11 +61,14 @@ services:
       - MCL_NODE_NAME=mcl_sec_guard
       - MCL_NODE_HOST=127.0.0.1
       - MCL_COOKIE=mcl_sec_guard
-      # The alert topic the guardian subscribes to, and where the
-      # trainer's run-set artifacts land (the console renders them;
-      # point this at the persistent data volume in placement config).
+      # The alert topic the guardian subscribes to, and where the trainer's
+      # run-set artifacts land (the console renders them). The run sets are a
+      # DIRECTORY, and it belongs on the data volume below like the proposal log:
+      # a directory under /app is the container's own filesystem and dies at the
+      # next recreate, which for a run set the console is still serving is the
+      # same silent loss (Terra, sg34 r1).
       - MCL_SEC_GUARD_ALERT_TOPIC=denials_observed
-      - MCL_SEC_GUARD_TRAINER_RUNS=${MCL_SEC_GUARD_TRAINER_RUNS:-trainer_runs}
+      - MCL_SEC_GUARD_TRAINER_RUNS=${MCL_SEC_GUARD_TRAINER_RUNS:-/var/lib/mcl-sec-guard/trainer_runs}
       # The admin console's port: 8458 is what mcl_sec_guard_admin:port/0 chooses
       # and what macula-fleet's edge/scripts/docker-compose.mcl-sec-guard.yml
       # sets. Named here rather than left to the release's own fallback, because

@@ -6,10 +6,11 @@ of, without reading it.*
 **Status: P0 shadow, one release in one container.** The service subscribes to
 the mesh's `denials_observed` facts, runs a deterministic placeholder rule over
 each one, and appends a proposal line to a local file. It announces no
-capability, applies nothing, and keeps no store. A second OTP application, the
+capability of its own, applies nothing, and keeps no store. A second OTP application, the
 trainer, ships in the same release and is off by default; the admin console on
-8458 (every interface, no auth) renders the proposal log and the trainer's run
-sets, and is the only thing that writes.
+the port `MCL_SEC_GUARD_ADMIN_PORT` names (every interface, no auth) renders the
+proposal log and the run sets, and its run button writes a run set. The recorder
+writes the log; they are the only two writers.
 
 ## Level 1: system context
 
@@ -17,13 +18,13 @@ sets, and is the only thing that writes.
 
 | Element | Kind | Role |
 | --- | --- | --- |
-| mcl-sec-guard | In scope | One OTP release in one container, an `mcl_om` mesh service on its own box. Subscribes to `denials_observed`, records a proposal per hot window, and serves the console on `MCL_SEC_GUARD_ADMIN_PORT` (8458) |
+| mcl-sec-guard | In scope | One OTP release in one container, an `mcl_om` mesh service on its own box. Subscribes to `denials_observed`, records a proposal per hot window, and serves the console on `MCL_SEC_GUARD_ADMIN_PORT`, which has no default |
 | Security reviewer | Person | Opens `/` for the proposal log and `/trainer` for the scoreboard, and can start an evaluation from the run button. Decides nothing here: P0 has no apply path |
 | Service operator | Person | Runs the box, deploys the release, and supplies the realm, key and station pins the release boots with |
-| proposals.log and run sets | External system, host files | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS` |
+| proposals.log and run sets | Files inside the container | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS`. The image declares no data volume, so both live and die with the container |
 | Guarded services | External system, mesh services | Any mesh service carrying `mcl_om`'s inbound guard. It publishes one `denials_observed` fact per window that saw activity |
 | macula-realm | Macula infrastructure | Endorses the node's identity key and grants the one scope the service asks for, `mcl-sec-guard` |
-| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC. The DHT holds no capability from this service, because `capabilities/0` is empty |
+| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC. The DHT holds no capability of this service's own, because `capabilities/0` returns `[]`: the only ones advertised are the `info` and `get_limits` mcl_om adds to every service |
 
 The guardian never calls a guarded service back. The relationship is one-way
 fact flow: a service publishes what it denied, the guardian proposes a limit
@@ -43,19 +44,19 @@ and nothing else.
 | `mcl_sec_guard_subscriber` | `macula_subscriber` behaviour | `handle_event/4` decodes the fact, asks the proposer, stamps the verified publisher's node id and sequence onto the proposal, and hands it to the recorder |
 | `mcl_sec_guard_proposer` | behaviour, plus the P0 rule | `propose/1` dispatches to the module named in `{mcl_sec_guard, proposer}`. `mcl_sec_guard_proposer_rule` proposes lowering `per_caller_max` to the over-limit count, and nothing else |
 | `mcl_sec_guard_recorder` | `gen_server`, append-only | Opens the log append at start and writes one `~0p` line per proposal synchronously, so lines never interleave. It crashes on an unwritable log rather than dropping proposals quietly |
-| `mcl_sec_guard_admin` | ranch listener, `0.0.0.0` | Listens on `MCL_SEC_GUARD_ADMIN_PORT` (8458 by default) with no authentication, the dev-fleet posture |
+| `mcl_sec_guard_admin` | ranch listener, `0.0.0.0` | Listens on `MCL_SEC_GUARD_ADMIN_PORT`, which has no default, with no authentication, the dev-fleet posture |
 | `mcl_sec_guard_admin_handler` | cowboy handler, the console | `GET /`, `/proposals.ndjson`, `/trainer`, `/trainer.ndjson`, `/trainer/episode`, and `POST /api/trainer/run`; everything else is a 404 |
-| `mcl_sec_guard_trainer_view` | pure reader | `read_run_sets/1` and `scoreboard/1` `file:consult/1` the reporter's term files. It loads no trainer module, which is why the console works with the trainer absent |
+| `mcl_sec_guard_trainer_view` | pure reader | `read_run_sets/1` `file:consult/1`s the reporter's term files; `scoreboard/1` only formats the list it is handed. It loads no trainer module, which is why the console works with the trainer absent |
 | `mcl_sec_guard_trainer_api` | the run endpoint's other half | `run/1` evaluates the baseline or one genome, one run at a time: a second call in flight returns `run_in_progress`, which the handler maps to 409 |
 | `mcl_sec_trainer` | second OTP application, in the release, off by default | The pure simulator, the eight scenarios, the episode runner and fitness vector, and `mcl_sec_trainer_reporter`. The term files it writes are the only bridge to the console |
 | `mcl_om` | library, `~> 1.4` | `boot/1`: mesh, identity, health, and one supervised subscriber per declared topic |
 | `macula` | library, `~> 16.0` | QUIC transport, the subscriber behaviour, `decode_payload/1`, and the signed DHT records |
-| `jsx, ranch, cowboy` | libraries, through `mcl_om` | `jsx` encodes the console's JSON; `ranch` and `cowboy` carry the admin listener |
+| `jsx, ranch, cowboy` | libraries, `jsx` declared directly | `jsx` encodes the console's JSON; `ranch` and `cowboy` carry the admin listener |
 | the host environment | environment, read at boot | `MCL_SEC_GUARD_ADMIN_PORT`, `MCL_SEC_GUARD_ALERT_TOPIC`, `MCL_SEC_GUARD_PROPOSAL_LOG`, `MCL_SEC_GUARD_TRAINER_RUNS`; `MCL_REALM`, `MCL_REALM_KEY` and the station pins are read by `mcl_om` |
 
 The three libraries at the bottom of the picture are linked into the same
 release and are drawn without arrows: every module above reaches the mesh
-through `mcl_om`, and the console is the only caller of `jsx`.
+through `mcl_om`; `jsx` is declared in `rebar.config` because the console calls it directly.
 `mcl_sec_trainer` ships in the release since mcl-sec-guard#16, but `faber`, its
 only learner, does not, and the Containerfile refuses a build whose release
 carries it.

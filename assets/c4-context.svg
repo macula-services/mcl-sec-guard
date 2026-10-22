@@ -54,7 +54,7 @@
 <text class="t-desc" x="76" y="132">decides nothing</text>
 <rect class="b-ext" x="400" y="30" width="300" height="120" rx="10"/>
 <text class="t-name" x="416" y="58">proposals.log and run sets</text>
-<text class="t-type" x="416" y="76">[External system, host files]</text>
+<text class="t-type" x="416" y="76">[files in the container; no data volume]</text>
 <text class="t-desc" x="416" y="100">MCL_SEC_GUARD_PROPOSAL_LOG</text>
 <text class="t-desc" x="416" y="116">gets one ~0p line per proposal;</text>
 <text class="t-desc" x="416" y="132">run sets land in trainer_runs/</text>
@@ -101,11 +101,11 @@
 <path class="edge" d="M500 370V460" marker-end="url(#a)"/>
 <text class="t-rel" x="508" y="412">claims scope mcl-sec-guard</text>
 <path class="edge" d="M700 330H740V430H905V460" marker-end="url(#a)"/>
-<text class="t-rel" x="748" y="348">joins the mesh through two</text>
+<text class="t-rel" x="748" y="348">joins the mesh through the</text>
 <text class="t-rel" x="748" y="364">pinned stations (QUIC)</text>
-<text class="t-desc" x="60" y="650">P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 is empty, so nothing</text>
-<text class="t-desc" x="60" y="668">on the mesh can call it. The worst a compromised P0 guardian can do is write a bad line into its own proposal log.</text>
-<text class="t-desc" x="60" y="686">The console is an audit window in both directions: it renders the log and the trainer's run sets, and decides nothing.</text>
+<text class="t-desc" x="60" y="650">P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares nothing</text>
+<text class="t-desc" x="60" y="668">of its own, so nothing on the mesh calls it beyond the info and get_limits mcl_om adds. The worst a compromised</text>
+<text class="t-desc" x="60" y="686">The console is an audit window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.</text>
 <rect class="b-sys" x="24" y="730" width="22" height="14" rx="3"/>
 <text class="t-leg" x="54" y="742">In scope</text>
 <rect class="b-per" x="110.8" y="730" width="22" height="14" rx="3"/>

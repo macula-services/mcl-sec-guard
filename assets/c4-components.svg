@@ -83,8 +83,8 @@
 <rect class="b-cmp" x="40" y="482" width="490" height="104" rx="10"/>
 <text class="t-code" x="56" y="510">mcl_sec_guard_admin</text>
 <text class="t-type" x="56" y="528">[ranch listener, 0.0.0.0]</text>
-<text class="t-desc" x="56" y="552">Listens on MCL_SEC_GUARD_ADMIN_PORT, 8458</text>
-<text class="t-desc" x="56" y="568">by default; no authentication</text>
+<text class="t-desc" x="56" y="552">Listens on MCL_SEC_GUARD_ADMIN_PORT,</text>
+<text class="t-desc" x="56" y="568">which has no default; no authentication</text>
 <rect class="b-cmp" x="670" y="482" width="490" height="104" rx="10"/>
 <text class="t-code" x="686" y="510">mcl_sec_guard_admin_handler</text>
 <text class="t-type" x="686" y="528">[cowboy handler, the console]</text>
@@ -93,8 +93,8 @@
 <rect class="b-cmp" x="40" y="610" width="490" height="104" rx="10"/>
 <text class="t-code" x="56" y="638">mcl_sec_guard_trainer_view</text>
 <text class="t-type" x="56" y="656">[pure reader]</text>
-<text class="t-desc" x="56" y="680">read_run_sets/1 and scoreboard/1 file:consult</text>
-<text class="t-desc" x="56" y="696">the term files; it loads no trainer module</text>
+<text class="t-desc" x="56" y="680">read_run_sets/1 file:consults the term files;</text>
+<text class="t-desc" x="56" y="696">scoreboard/1 formats the list it is given</text>
 <rect class="b-cmp" x="670" y="610" width="490" height="104" rx="10"/>
 <text class="t-code" x="686" y="638">mcl_sec_guard_trainer_api</text>
 <text class="t-type" x="686" y="656">[the run endpoint's other half]</text>
@@ -117,13 +117,13 @@
 <text class="t-desc" x="436" y="952">decode_payload/1, the signed DHT records</text>
 <rect class="b-mac" x="800" y="866" width="360" height="104" rx="10"/>
 <text class="t-code" x="816" y="894">jsx, ranch, cowboy</text>
-<text class="t-type" x="816" y="912">[libraries, through mcl_om]</text>
+<text class="t-type" x="816" y="912">[jsx declared directly; ranch and cowboy through mcl_om]</text>
 <text class="t-desc" x="816" y="936">jsx encodes the console's JSON; ranch and</text>
 <text class="t-desc" x="816" y="952">cowboy carry the admin listener</text>
 <rect class="b-ext" x="40" y="1024" width="1120" height="104" rx="10"/>
 <text class="t-code" x="56" y="1052">the host environment</text>
 <text class="t-type" x="56" y="1070">[environment, read at boot; no secret here]</text>
-<text class="t-desc" x="56" y="1094">MCL_SEC_GUARD_ADMIN_PORT (8458), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;</text>
+<text class="t-desc" x="56" y="1094">MCL_SEC_GUARD_ADMIN_PORT (no default), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;</text>
 <text class="t-desc" x="56" y="1110">MCL_REALM, MCL_REALM_KEY and the station pins are read by mcl_om, not by these modules</text>
 <path class="edge" d="M530 126H670" marker-end="url(#a)"/>
 <text class="t-rel" x="600" y="118" text-anchor="middle">boots</text>
@@ -135,8 +135,8 @@
 <text class="t-rel" x="923" y="206">subscriptions/0</text>
 <path class="edge" d="M915 314V338" marker-end="url(#a)"/>
 <text class="t-rel" x="923" y="334">hands each fact over</text>
-<path class="edge" d="M670 398H530" marker-end="url(#a)"/>
-<text class="t-rel" x="600" y="390" text-anchor="middle">a proposal, or none</text>
+<path class="edge" d="M670 290H620V398H530" marker-end="url(#a)"/>
+<text class="t-rel" x="600" y="390" text-anchor="middle">the proposal, to the recorder</text>
 <path class="edge" d="M530 534H670" marker-end="url(#a)"/>
 <text class="t-rel" x="600" y="526" text-anchor="middle">routes to</text>
 <path class="edge" d="M670 560H600V662H530" marker-end="url(#a)"/>

@@ -136,7 +136,7 @@ def context():
     d.box("b-per", 60, 30, 280, 120, "Security reviewer", "[Person]",
           ["Reads the proposal log at /", "and the trainer scoreboard;",
            "decides nothing"], person=True)
-    d.box("b-ext", 400, 30, 300, 120, "proposals.log and run sets", "[External system, host files]",
+    d.box("b-ext", 400, 30, 300, 120, "proposals.log and run sets", "[files in the container; no data volume]",
           ["MCL_SEC_GUARD_PROPOSAL_LOG", "gets one ~0p line per proposal;",
            "run sets land in trainer_runs/"])
     d.box("b-per", 770, 30, 270, 104, "Service operator", "[Person]",
@@ -165,11 +165,11 @@ def context():
     d.edge("M500 370V460")
     d.text("t-rel", 508, 412, "claims scope mcl-sec-guard")
     d.edge("M700 330H740V430H905V460")
-    d.text("t-rel", 748, 348, "joins the mesh through two")
+    d.text("t-rel", 748, 348, "joins the mesh through the")
     d.text("t-rel", 748, 364, "pinned stations (QUIC)")
-    d.text("t-desc", 60, 650, "P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 is empty, so nothing")
-    d.text("t-desc", 60, 668, "on the mesh can call it. The worst a compromised P0 guardian can do is write a bad line into its own proposal log.")
-    d.text("t-desc", 60, 686, "The console is an audit window in both directions: it renders the log and the trainer's run sets, and decides nothing.")
+    d.text("t-desc", 60, 650, "P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares nothing")
+    d.text("t-desc", 60, 668, "of its own, so nothing on the mesh calls it beyond the info and get_limits mcl_om adds. The worst a compromised")
+    d.text("t-desc", 60, 686, "The console is an audit window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.")
     d.legend(730, boundary=False)
     d.write()
 
@@ -196,12 +196,12 @@ def components():
           ["propose/1 dispatches to the module named in", "{mcl_sec_guard, proposer}; the rule lowers",
            "per_caller_max to the over-limit count"], code=True)
     d.box("b-cmp", 40, 482, 490, 104, "mcl_sec_guard_admin", "[ranch listener, 0.0.0.0]",
-          ["Listens on MCL_SEC_GUARD_ADMIN_PORT, 8458", "by default; no authentication"], code=True)
+          ["Listens on MCL_SEC_GUARD_ADMIN_PORT,", "which has no default; no authentication"], code=True)
     d.box("b-cmp", 670, 482, 490, 104, "mcl_sec_guard_admin_handler", "[cowboy handler, the console]",
           ["/, /proposals.ndjson, /trainer, /trainer.ndjson,", "/trainer/episode, POST /api/trainer/run"],
           code=True)
     d.box("b-cmp", 40, 610, 490, 104, "mcl_sec_guard_trainer_view", "[pure reader]",
-          ["read_run_sets/1 and scoreboard/1 file:consult", "the term files; it loads no trainer module"],
+          ["read_run_sets/1 file:consults the term files;", "scoreboard/1 formats the list it is given"],
           code=True)
     d.box("b-cmp", 670, 610, 490, 104, "mcl_sec_guard_trainer_api", "[the run endpoint's other half]",
           ["run/1: the baseline or one genome, one run", "at a time; a second call is 409"], code=True)
@@ -214,17 +214,17 @@ def components():
     d.box("b-mac", 420, 866, 360, 104, "macula", "[library, ~> 16.0]",
           ["QUIC transport, subscriber behaviour,", "decode_payload/1, the signed DHT records"],
           code=True)
-    d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[libraries, through mcl_om]",
+    d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[jsx declared directly; ranch and cowboy through mcl_om]",
           ["jsx encodes the console's JSON; ranch and", "cowboy carry the admin listener"], code=True)
     d.box("b-ext", 40, 1024, 1120, 104, "the host environment", "[environment, read at boot; no secret here]",
-          ["MCL_SEC_GUARD_ADMIN_PORT (8458), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;",
+          ["MCL_SEC_GUARD_ADMIN_PORT (no default), MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;",
            "MCL_REALM, MCL_REALM_KEY and the station pins are read by mcl_om, not by these modules"], code=True)
     d.edge("M530 126H670"); d.text("t-rel", 600, 118, "boots", anchor="middle")
     d.edge("M670 160H600V262H530"); d.text("t-rel", 592, 216, "start/1", anchor="end")
     d.edge("M285 314V338"); d.text("t-rel", 293, 334, "supervises")
     d.edge("M915 186V210"); d.text("t-rel", 923, 206, "subscriptions/0")
     d.edge("M915 314V338"); d.text("t-rel", 923, 334, "hands each fact over")
-    d.edge("M670 398H530"); d.text("t-rel", 600, 390, "a proposal, or none", anchor="middle")
+    d.edge("M670 290H620V398H530"); d.text("t-rel", 600, 390, "the proposal, to the recorder", anchor="middle")
     d.edge("M530 534H670"); d.text("t-rel", 600, 526, "routes to", anchor="middle")
     d.edge("M670 560H600V662H530"); d.text("t-rel", 548, 568, "scoreboard/1")
     d.edge("M915 586V610"); d.text("t-rel", 923, 606, "run/1, 409 while busy")

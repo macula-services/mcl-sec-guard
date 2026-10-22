@@ -23,7 +23,7 @@ sets, and is the only thing that writes.
 | proposals.log and run sets | External system, host files | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS` |
 | Guarded services | External system, mesh services | Any mesh service carrying `mcl_om`'s inbound guard. It publishes one `denials_observed` fact per window that saw activity |
 | macula-realm | Macula infrastructure | Endorses the node's identity key and grants the one scope the service asks for, `mcl-sec-guard` |
-| Macula stations, mesh DHT | Macula infrastructure | Two pinned stations are its mesh entry points over QUIC. The DHT holds no capability from this service, because `capabilities/0` is empty |
+| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC. The DHT holds no capability from this service, because `capabilities/0` is empty |
 
 The guardian never calls a guarded service back. The relationship is one-way
 fact flow: a service publishes what it denied, the guardian proposes a limit
@@ -79,5 +79,7 @@ plain classes plus a `prefers-color-scheme` dark block, never CSS custom
 properties, which `rsvg-convert` renders black.
 
 The check that keeps them here is the `c4-model` job in
-`.github/workflows/build-push.yml`. It is red until both files exist and are
+`.github/workflows/c4-model.yml`. It is red until both files exist and are
 shown, and it stays red if either one goes missing.
+
+**Where the station list comes from.** It is not in `config/sys.config.src`: `mcl_om` reads `MACULA_STATION_SEEDS` and `MACULA_STATION_NODE_IDS` from the environment at boot, paired index for index, so this repository pins no station and the list may be any length.

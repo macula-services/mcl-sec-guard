@@ -151,7 +151,7 @@ def context():
           ["Endorses the node's identity key", "and grants the one scope it asks",
            "for, mcl-sec-guard"])
     d.box("b-mac", 770, 460, 270, 120, "Macula stations, mesh DHT", "[Macula infrastructure]",
-          ["Two pinned stations are its mesh", "entry points over QUIC; the DHT",
+          ["The pinned stations are its mesh", "entry points over QUIC; the DHT",
            "holds no capability from it"])
     d.edge("M200 150V190H440V220")
     d.text("t-rel", 208, 168, "opens the console on 8458")

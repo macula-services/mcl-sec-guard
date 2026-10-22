@@ -70,7 +70,7 @@
 <text class="t-desc" x="416" y="290">The guardian, P0 shadow: it</text>
 <text class="t-desc" x="416" y="306">observes, proposes, records,</text>
 <text class="t-desc" x="416" y="322">and applies nothing. Console</text>
-<text class="t-desc" x="416" y="338">on port 8458, no auth</text>
+<text class="t-desc" x="416" y="338">on the admin port, no auth</text>
 <rect class="b-ext" x="60" y="460" width="280" height="140" rx="10"/>
 <text class="t-name" x="76" y="488">Guarded services</text>
 <text class="t-type" x="76" y="506">[External system, mesh services]</text>
@@ -88,13 +88,13 @@
 <text class="t-type" x="786" y="506">[Macula infrastructure]</text>
 <text class="t-desc" x="786" y="530">The pinned stations are its mesh</text>
 <text class="t-desc" x="786" y="546">entry points over QUIC; the DHT</text>
-<text class="t-desc" x="786" y="562">holds no capability from it</text>
+<text class="t-desc" x="786" y="562">holds mcl_om's info and get_limits</text>
 <path class="edge" d="M200 150V190H440V220" marker-end="url(#a)"/>
-<text class="t-rel" x="208" y="168">opens the console on 8458</text>
+<text class="t-rel" x="208" y="168">opens the console</text>
 <path class="edge" d="M905 134V200H660V220" marker-end="url(#a)"/>
 <text class="t-rel" x="712" y="168">deploys the release, sets the env</text>
 <path class="edge" d="M550 220V140" marker-end="url(#a)"/>
-<text class="t-rel" x="558" y="178">writes proposals.log; reads run sets</text>
+<text class="t-rel" x="558" y="178">writes proposals.log and run sets</text>
 <path class="edge" d="M200 460V420H440V370" marker-end="url(#a)"/>
 <text class="t-rel" x="208" y="400">publishes denials_observed</text>
 <text class="t-rel" x="208" y="416">once per active window</text>
@@ -103,9 +103,9 @@
 <path class="edge" d="M700 330H740V430H905V460" marker-end="url(#a)"/>
 <text class="t-rel" x="748" y="348">joins the mesh through the</text>
 <text class="t-rel" x="748" y="364">pinned stations (QUIC)</text>
-<text class="t-desc" x="60" y="650">P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares nothing</text>
-<text class="t-desc" x="60" y="668">of its own, so nothing on the mesh calls it beyond the info and get_limits mcl_om adds. The worst a compromised</text>
-<text class="t-desc" x="60" y="686">The console is an audit window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.</text>
+<text class="t-desc" x="60" y="650">P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares</text>
+<text class="t-desc" x="60" y="668">nothing of its own: mcl_om adds the info and get_limits every service carries. The console is an audit</text>
+<text class="t-desc" x="60" y="686">window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.</text>
 <rect class="b-sys" x="24" y="730" width="22" height="14" rx="3"/>
 <text class="t-leg" x="54" y="742">In scope</text>
 <rect class="b-per" x="110.8" y="730" width="22" height="14" rx="3"/>

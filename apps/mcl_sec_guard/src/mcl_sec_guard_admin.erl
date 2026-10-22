@@ -13,7 +13,7 @@ start_link() ->
                          cowboy_clear,
                          #{env => #{dispatch => mcl_sec_guard_admin_handler:routes()}}).
 
-%% @doc The admin port, from the deploy environment: 8458 on beam00.
+%% @doc The admin port, from the deploy environment.
 -spec port() -> inet:port_number().
 port() ->
     application:get_env(mcl_sec_guard, admin_port, 8458).

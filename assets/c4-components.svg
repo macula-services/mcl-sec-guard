@@ -57,7 +57,7 @@
 <text class="t-type" x="686" y="112">[mcl_om_service behaviour]</text>
 <text class="t-desc" x="686" y="136">info, start, stop, health, capabilities,</text>
 <text class="t-desc" x="686" y="152">identity_spec, subscriptions. capabilities/0</text>
-<text class="t-desc" x="686" y="168">is [], because nothing answers yet</text>
+<text class="t-desc" x="686" y="168">is []; mcl_om adds info and get_limits</text>
 <rect class="b-cmp" x="40" y="210" width="490" height="104" rx="10"/>
 <text class="t-code" x="56" y="238">mcl_sec_guard_sup</text>
 <text class="t-type" x="56" y="256">[supervisor, one_for_one]</text>
@@ -117,7 +117,7 @@
 <text class="t-desc" x="436" y="952">decode_payload/1, the signed DHT records</text>
 <rect class="b-mac" x="800" y="866" width="360" height="104" rx="10"/>
 <text class="t-code" x="816" y="894">jsx, ranch, cowboy</text>
-<text class="t-type" x="816" y="912">[jsx declared directly; ranch and cowboy through mcl_om]</text>
+<text class="t-type" x="816" y="912">[jsx direct; ranch, cowboy via mcl_om]</text>
 <text class="t-desc" x="816" y="936">jsx encodes the console's JSON; ranch and</text>
 <text class="t-desc" x="816" y="952">cowboy carry the admin listener</text>
 <rect class="b-ext" x="40" y="1024" width="1120" height="104" rx="10"/>
@@ -136,11 +136,11 @@
 <path class="edge" d="M915 314V338" marker-end="url(#a)"/>
 <text class="t-rel" x="923" y="334">hands each fact over</text>
 <path class="edge" d="M670 290H620V398H530" marker-end="url(#a)"/>
-<text class="t-rel" x="600" y="390" text-anchor="middle">the proposal, to the recorder</text>
+<text class="t-rel" x="600" y="390" text-anchor="middle">the proposal</text>
 <path class="edge" d="M530 534H670" marker-end="url(#a)"/>
 <text class="t-rel" x="600" y="526" text-anchor="middle">routes to</text>
 <path class="edge" d="M670 560H600V662H530" marker-end="url(#a)"/>
-<text class="t-rel" x="548" y="568">scoreboard/1</text>
+<text class="t-rel" x="552" y="568">scoreboard/1</text>
 <path class="edge" d="M915 586V610" marker-end="url(#a)"/>
 <text class="t-rel" x="923" y="606">run/1, 409 while busy</text>
 <path class="edge" d="M915 714V738" marker-end="url(#a)"/>

@@ -143,7 +143,7 @@ def context():
           ["Deploys the release and sets", "the environment it boots with"], person=True)
     d.box("b-sys", 400, 220, 300, 150, "mcl-sec-guard", "[mcl_om mesh service, own box]",
           ["The guardian, P0 shadow: it", "observes, proposes, records,",
-           "and applies nothing. Console", "on port 8458, no auth"])
+           "and applies nothing. Console", "on the admin port, no auth"])
     d.box("b-ext", 60, 460, 280, 140, "Guarded services", "[External system, mesh services]",
           ["Any mesh service with mcl-om's", "inbound guard publishes",
            "denials_observed per active window"])
@@ -152,13 +152,13 @@ def context():
            "for, mcl-sec-guard"])
     d.box("b-mac", 770, 460, 270, 120, "Macula stations, mesh DHT", "[Macula infrastructure]",
           ["The pinned stations are its mesh", "entry points over QUIC; the DHT",
-           "holds no capability from it"])
+           "holds mcl_om's info and get_limits"])
     d.edge("M200 150V190H440V220")
-    d.text("t-rel", 208, 168, "opens the console on 8458")
+    d.text("t-rel", 208, 168, "opens the console")
     d.edge("M905 134V200H660V220")
     d.text("t-rel", 712, 168, "deploys the release, sets the env")
     d.edge("M550 220V140")
-    d.text("t-rel", 558, 178, "writes proposals.log; reads run sets")
+    d.text("t-rel", 558, 178, "writes proposals.log and run sets")
     d.edge("M200 460V420H440V370")
     d.text("t-rel", 208, 400, "publishes denials_observed")
     d.text("t-rel", 208, 416, "once per active window")
@@ -167,9 +167,9 @@ def context():
     d.edge("M700 330H740V430H905V460")
     d.text("t-rel", 748, 348, "joins the mesh through the")
     d.text("t-rel", 748, 364, "pinned stations (QUIC)")
-    d.text("t-desc", 60, 650, "P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares nothing")
-    d.text("t-desc", 60, 668, "of its own, so nothing on the mesh calls it beyond the info and get_limits mcl_om adds. The worst a compromised")
-    d.text("t-desc", 60, 686, "The console is an audit window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.")
+    d.text("t-desc", 60, 650, "P0 shadow: the guardian applies nothing. No set_limits call is in its namespace, and capabilities/0 declares")
+    d.text("t-desc", 60, 668, "nothing of its own: mcl_om adds the info and get_limits every service carries. The console is an audit")
+    d.text("t-desc", 60, 686, "window: it renders the log and the run sets, and its run button writes a run set. It decides nothing.")
     d.legend(730, boundary=False)
     d.write()
 
@@ -182,7 +182,7 @@ def components():
           code=True)
     d.box("b-cmp", 670, 66, 490, 120, "mcl_sec_guard_service", "[mcl_om_service behaviour]",
           ["info, start, stop, health, capabilities,", "identity_spec, subscriptions. capabilities/0",
-           "is [], because nothing answers yet"], code=True)
+           "is []; mcl_om adds info and get_limits"], code=True)
     d.box("b-cmp", 40, 210, 490, 104, "mcl_sec_guard_sup", "[supervisor, one_for_one]",
           ["Two children: mcl_sec_guard_recorder and", "mcl_sec_guard_admin; 5 restarts per 10 s"],
           code=True)
@@ -214,7 +214,7 @@ def components():
     d.box("b-mac", 420, 866, 360, 104, "macula", "[library, ~> 16.0]",
           ["QUIC transport, subscriber behaviour,", "decode_payload/1, the signed DHT records"],
           code=True)
-    d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[jsx declared directly; ranch and cowboy through mcl_om]",
+    d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[jsx direct; ranch, cowboy via mcl_om]",
           ["jsx encodes the console's JSON; ranch and", "cowboy carry the admin listener"], code=True)
     d.box("b-ext", 40, 1024, 1120, 104, "the host environment", "[environment, read at boot; no secret here]",
           ["MCL_SEC_GUARD_ADMIN_PORT, MCL_SEC_GUARD_ALERT_TOPIC, MCL_SEC_GUARD_PROPOSAL_LOG, MCL_SEC_GUARD_TRAINER_RUNS;",
@@ -224,9 +224,9 @@ def components():
     d.edge("M285 314V338"); d.text("t-rel", 293, 334, "supervises")
     d.edge("M915 186V210"); d.text("t-rel", 923, 206, "subscriptions/0")
     d.edge("M915 314V338"); d.text("t-rel", 923, 334, "hands each fact over")
-    d.edge("M670 290H620V398H530"); d.text("t-rel", 600, 390, "the proposal, to the recorder", anchor="middle")
+    d.edge("M670 290H620V398H530"); d.text("t-rel", 600, 390, "the proposal", anchor="middle")
     d.edge("M530 534H670"); d.text("t-rel", 600, 526, "routes to", anchor="middle")
-    d.edge("M670 560H600V662H530"); d.text("t-rel", 548, 568, "scoreboard/1")
+    d.edge("M670 560H600V662H530"); d.text("t-rel", 552, 568, "scoreboard/1")
     d.edge("M915 586V610"); d.text("t-rel", 923, 606, "run/1, 409 while busy")
     d.edge("M915 714V738"); d.text("t-rel", 923, 734, "baseline, genome, episodes")
     d.text("t-desc", 40, 1146, "The three libraries at the bottom are linked into this release; their arrows are left out because every module above")

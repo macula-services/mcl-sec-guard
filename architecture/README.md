@@ -21,7 +21,7 @@ writes the log; they are the only two writers.
 | mcl-sec-guard | In scope | One OTP release in one container, an `mcl_om` mesh service on its own box. Subscribes to `denials_observed`, records a proposal per hot window, and serves the console on the port `MCL_SEC_GUARD_ADMIN_PORT` names |
 | Security reviewer | Person | Opens `/` for the proposal log and `/trainer` for the scoreboard, and can start an evaluation from the run button. Decides nothing here: P0 has no apply path |
 | Service operator | Person | Runs the box, deploys the release, and supplies the realm, key and station pins the release boots with |
-| proposals.log and run sets | Files inside the container | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS`. The image declares no data volume, so both live and die with the container |
+| proposals.log and run sets | Files the service writes | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS`. The image declares no data volume: whether they outlive a container is the deployment's business, not the image's |
 | Guarded services | External system, mesh services | Any mesh service carrying `mcl_om`'s inbound guard. It publishes one `denials_observed` fact per window that saw activity |
 | macula-realm | Macula infrastructure | Endorses the node's identity key and grants the one scope the service asks for, `mcl-sec-guard` |
 | Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC. The DHT holds no capability of this service's own, because `capabilities/0` returns `[]`: the only ones advertised are the `info` and `get_limits` mcl_om adds to every service |

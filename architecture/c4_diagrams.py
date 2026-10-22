@@ -136,7 +136,7 @@ def context():
     d.box("b-per", 60, 30, 280, 120, "Security reviewer", "[Person]",
           ["Reads the proposal log at /", "and the trainer scoreboard;",
            "decides nothing"], person=True)
-    d.box("b-ext", 400, 30, 300, 120, "proposals.log and run sets", "[files in the container; no data volume]",
+    d.box("b-ext", 400, 30, 300, 120, "proposals.log and run sets", "[files it writes; no volume in the image]",
           ["MCL_SEC_GUARD_PROPOSAL_LOG", "gets one ~0p line per proposal;",
            "run sets land in trainer_runs/"])
     d.box("b-per", 770, 30, 270, 104, "Service operator", "[Person]",

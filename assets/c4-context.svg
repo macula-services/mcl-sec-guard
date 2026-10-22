@@ -54,7 +54,7 @@
 <text class="t-desc" x="76" y="132">decides nothing</text>
 <rect class="b-ext" x="400" y="30" width="300" height="120" rx="10"/>
 <text class="t-name" x="416" y="58">proposals.log and run sets</text>
-<text class="t-type" x="416" y="76">[files in the container; no data volume]</text>
+<text class="t-type" x="416" y="76">[files it writes; no volume in the image]</text>
 <text class="t-desc" x="416" y="100">MCL_SEC_GUARD_PROPOSAL_LOG</text>
 <text class="t-desc" x="416" y="116">gets one ~0p line per proposal;</text>
 <text class="t-desc" x="416" y="132">run sets land in trainer_runs/</text>

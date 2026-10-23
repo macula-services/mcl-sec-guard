@@ -38,7 +38,7 @@ services:
       # line per denied window, and a log inside the container dies with it.
       - data:/var/lib/mcl-sec-guard
     labels:
-      # The label is inert unless a watchtower with label-enable runs on this box.
+      # Nothing reads this label: the fleet runs no watchtower.
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       # No default. A service that guesses its realm announces itself where

@@ -1,5 +1,5 @@
-%%% @doc One episode: one procedure under one scenario for T windows,
-%%% scored with the fitness vector.
+%%% @doc An episode: a procedure under a scenario for T windows, scored
+%%% with the fitness vector.
 %%%
 %%% The loop mirrors the live sense → decide → act cadence: the policy
 %%% sees the sim's stats for the window that just closed (the same

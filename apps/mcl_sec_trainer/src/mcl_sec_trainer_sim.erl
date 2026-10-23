@@ -11,7 +11,7 @@
 %%% - size stage first (cheapest refusal): a payload whose
 %%%   erlang:external_size/1 exceeds `max_payload_external_size' is denied
 %%%   before the rate counter ever sees it;
-%%% - rate stage: one fixed-window count per (procedure, caller); the
+%%% - rate stage: a fixed-window count per (procedure, caller); the
 %%%   `'$global'` bucket takes non-attributed calls, named callers take
 %%%   their per-caller budget;
 %%% - the distinct-caller bound: once a window has seen
@@ -122,7 +122,7 @@ declare_validated(World, Proc, Declared, Envelope) ->
             put_proc(World, Proc, new_entry(Declared, Envelope, Overrides))
     end.
 
-%% @doc The effective limits and envelope of one procedure — the same
+%% @doc The effective limits and envelope of a procedure — the same
 %% fallback as the real module: the framework defaults and no envelope
 %% before the first declare.
 -spec get(world(), binary()) -> #{limits := limits(), envelope := envelope()}.
@@ -261,7 +261,7 @@ advance(World, Proc) ->
 current_window(World, Proc) ->
     maps:get(Proc, maps:get(windows, World), 0).
 
-%% @doc A guardian-facing view of one procedure's CURRENT window — the
+%% @doc A guardian-facing view of a procedure's CURRENT window — the
 %% same shape mcl_om_guard:stats/1 returns: limits and envelope in
 %% effect, global fill, callers over their budget, the heaviest callers
 %% (hex-encoded ids, wire-safe), both per-window denial counters, and

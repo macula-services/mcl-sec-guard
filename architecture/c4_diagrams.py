@@ -136,9 +136,10 @@ def context():
     d.box("b-per", 60, 30, 280, 120, "Security reviewer", "[Person]",
           ["Reads the proposal log at /", "and the trainer scoreboard;",
            "decides nothing"], person=True)
-    d.box("b-ext", 400, 30, 300, 120, "proposals.log and run sets", "[files it writes; compose mounts them]",
+    d.box("b-ext", 400, 30, 300, 160, "proposals.log and run sets", "[files it writes; compose mounts them]",
           ["MCL_SEC_GUARD_PROPOSAL_LOG", "gets one ~0p line per proposal;",
-           "run sets land in trainer_runs/"])
+           "run sets land in trainer_runs/.", "Both sit under the data volume",
+           "deploy/docker-compose.yml mounts"])
     d.box("b-per", 770, 30, 270, 104, "Service operator", "[Person]",
           ["Deploys the release and sets", "the environment it boots with"], person=True)
     d.box("b-sys", 400, 220, 300, 150, "mcl-sec-guard", "[mcl_om mesh service]",
@@ -157,8 +158,8 @@ def context():
     d.text("t-rel", 208, 168, "opens the console")
     d.edge("M905 134V200H660V220")
     d.text("t-rel", 664, 164, "deploys the release, sets the env")
-    d.edge("M550 220V140")
-    d.text("t-rel", 558, 178, "writes proposals.log and run sets")
+    d.edge("M550 220V190")
+    d.text("t-rel", 558, 212, "writes proposals.log and run sets")
     d.edge("M200 460V420H440V370")
     d.text("t-rel", 208, 400, "publishes denials_observed")
     d.text("t-rel", 208, 416, "once per active window")

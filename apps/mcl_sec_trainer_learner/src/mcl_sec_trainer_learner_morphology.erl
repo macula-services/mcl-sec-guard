@@ -1,7 +1,7 @@
 %%% @doc The guardian's morphology for the TWEANN arm (mcl-sec-guard#20):
 %%% one sensor carrying the 24-length posture vector (two windows of 12
 %%% features, the order mcl_sec_trainer_features:vector/2 lays out) and
-%%% one actuator carrying the three tightness scalars the action mapping
+%%% one actuator carrying the tightness scalars the action mapping
 %%% reads, in the order mcl_sec_trainer_actions:moves/4 takes them.
 %%%
 %%% Registered by mcl_sec_trainer_learner_tweann:register/0. Nothing here

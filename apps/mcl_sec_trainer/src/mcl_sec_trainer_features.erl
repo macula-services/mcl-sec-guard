@@ -1,7 +1,7 @@
 %%% @doc The observation vector the fixed-shape policy reads (the
 %%% plan's §3 table, distilled to v1).
 %%%
-%%% One policy for all procedures: every feature is a ratio against the
+%%% A policy for all procedures: every feature is a ratio against the
 %%% procedure's OWN limits and envelope, so the same genome reads any
 %%% procedure. The vector is the CURRENT window's twelve features
 %%% followed by the PREVIOUS window's twelve (K=1 history, zeros when

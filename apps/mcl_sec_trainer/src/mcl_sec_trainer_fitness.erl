@@ -1,8 +1,8 @@
 %%% @doc The fitness vector (mcl-sec-guard#20).
 %%%
 %%% "Better" is machine-optimisable, and the definition is a CLAIM owned
-%%% and versioned by a human. One episode (one procedure, one scenario,
-%%% T windows) measures four concerns, each normalised to [0, 1]:
+%%% and versioned by a human. An episode (a procedure, a scenario, T
+%%% windows) measures four concerns, each normalised to [0, 1]:
 %%%
 %%%     C (containment) = 1 - attacker_calls_admitted / attacker_calls_attempted
 %%%     A (admission)   = legit_calls_admitted / legit_calls_attempted

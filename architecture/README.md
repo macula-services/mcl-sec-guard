@@ -23,7 +23,7 @@ writes the log; they are the only two writers.
 | Service operator | Person | Runs the box, deploys the release, and supplies the realm, key and station pins the release boots with |
 | proposals.log and run sets | Files the service writes | `MCL_SEC_GUARD_PROPOSAL_LOG` gets one `~0p` line per proposal; run sets land under `MCL_SEC_GUARD_TRAINER_RUNS`. Both defaults sit under `/var/lib/mcl-sec-guard`, which `deploy/docker-compose.yml` mounts from the `data` volume; the `Containerfile` declares `/etc/mcl/secrets` (the node identity) as its only volume and no data volume, so outliving a container is the deployment's business, not the image's |
 | Guarded services | External system, mesh services | Any mesh service carrying `mcl_om`'s inbound guard. It publishes one `denials_observed` fact per window that saw activity |
-| macula-realm | Macula infrastructure | Endorses the node's identity key and grants a a provider authorization per org procedure, the open `info` and `get_limits` included. Without that grant `/health` reads degraded |
+| macula-realm | Macula infrastructure | Endorses the node's identity key and grants a provider authorization per org procedure, the open `info` and `get_limits` included. Without that grant `/health` reads degraded |
 | Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC. The DHT holds no capability of this service's own, because `capabilities/0` returns `[]`: what it advertises is the `info` and `get_limits` mcl_om adds to every service |
 
 The guardian never calls a guarded service back. The relationship is one-way

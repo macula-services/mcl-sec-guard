@@ -180,9 +180,9 @@ def components():
     d.box("b-cmp", 40, 66, 490, 120, "mcl_sec_guard_app", "[application behaviour]",
           ["start/2 calls mcl_om:boot(mcl_sec_guard_service):", "the whole service starts from this one line"],
           code=True)
-    d.box("b-cmp", 670, 66, 490, 136, "mcl_sec_guard_service", "[mcl_om_service behaviour]",
-          ["The mcl_om_service callbacks: start, stop, health,", "capabilities, identity_spec, subscriptions. Its",
-           "capabilities/0 is empty; mcl_om adds the open", "info and get_limits"], code=True)
+    d.box("b-cmp", 670, 66, 490, 120, "mcl_sec_guard_service", "[mcl_om_service behaviour]",
+          ["The mcl_om_service callbacks: info, start, stop, health,", "capabilities, identity_spec, subscriptions. capabilities/0 is",
+           "empty; mcl_om adds the open info and get_limits"], code=True)
     d.box("b-cmp", 40, 210, 490, 104, "mcl_sec_guard_sup", "[supervisor, one_for_one]",
           ["Two children: mcl_sec_guard_recorder and", "mcl_sec_guard_admin; 5 restarts per 10 s"],
           code=True)

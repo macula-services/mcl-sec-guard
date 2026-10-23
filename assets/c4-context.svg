@@ -52,12 +52,14 @@
 <text class="t-desc" x="76" y="100">Reads the proposal log at /</text>
 <text class="t-desc" x="76" y="116">and the trainer scoreboard;</text>
 <text class="t-desc" x="76" y="132">decides nothing</text>
-<rect class="b-ext" x="400" y="30" width="300" height="120" rx="10"/>
+<rect class="b-ext" x="400" y="30" width="300" height="160" rx="10"/>
 <text class="t-name" x="416" y="58">proposals.log and run sets</text>
 <text class="t-type" x="416" y="76">[files it writes; compose mounts them]</text>
 <text class="t-desc" x="416" y="100">MCL_SEC_GUARD_PROPOSAL_LOG</text>
 <text class="t-desc" x="416" y="116">gets one ~0p line per proposal;</text>
-<text class="t-desc" x="416" y="132">run sets land in trainer_runs/</text>
+<text class="t-desc" x="416" y="132">run sets land in trainer_runs/.</text>
+<text class="t-desc" x="416" y="148">Both sit under the data volume</text>
+<text class="t-desc" x="416" y="164">deploy/docker-compose.yml mounts</text>
 <rect class="b-per" x="770" y="30" width="270" height="104" rx="10"/>
 <circle class="head" cx="796" cy="54" r="9"/>
 <text class="t-name" x="814" y="58">Service operator</text>
@@ -94,8 +96,8 @@
 <text class="t-rel" x="208" y="168">opens the console</text>
 <path class="edge" d="M905 134V200H660V220" marker-end="url(#a)"/>
 <text class="t-rel" x="664" y="164">deploys the release, sets the env</text>
-<path class="edge" d="M550 220V140" marker-end="url(#a)"/>
-<text class="t-rel" x="558" y="178">writes proposals.log and run sets</text>
+<path class="edge" d="M550 220V190" marker-end="url(#a)"/>
+<text class="t-rel" x="558" y="212">writes proposals.log and run sets</text>
 <path class="edge" d="M200 460V420H440V370" marker-end="url(#a)"/>
 <text class="t-rel" x="208" y="400">publishes denials_observed</text>
 <text class="t-rel" x="208" y="416">once per active window</text>

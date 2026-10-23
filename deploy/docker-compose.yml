@@ -17,7 +17,11 @@
 
 services:
   mcl-sec-guard:
-    image: ghcr.io/macula-services/mcl-sec-guard:latest
+    # :main is what a push to main publishes, and this package publishes no
+    # :latest at all (.github/workflows/build-push.yml). A deployed box does not
+    # follow a moving tag: it pins a signed release by digest, as macula-fleet's
+    # edge/scripts/docker-compose.mcl-sec-guard.yml:25 does.
+    image: ghcr.io/macula-services/mcl-sec-guard:main
     container_name: mcl-sec-guard
     restart: unless-stopped
     # HOST NETWORKING IS NOT LAZINESS. macula stations are reachable over IPv6
@@ -38,7 +42,9 @@ services:
       # line per denied window, and a log inside the container dies with it.
       - data:/var/lib/mcl-sec-guard
     labels:
-      # Nothing reads this label: the fleet runs no watchtower.
+      # Nothing in this repository reads this label, and the compose that deploys
+      # this image (macula-fleet's edge/scripts/docker-compose.mcl-sec-guard.yml)
+      # carries neither the label nor a watchtower service.
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       # No default. A service that guesses its realm announces itself where
@@ -69,7 +75,7 @@ services:
       - MCL_SEC_GUARD_ALERT_TOPIC=denials_observed
       - MCL_SEC_GUARD_TRAINER_RUNS=${MCL_SEC_GUARD_TRAINER_RUNS:-/var/lib/mcl-sec-guard/trainer_runs}
       # The admin console's port: 8458 is what mcl_sec_guard_admin:port/0 chooses
-      # and what macula-fleet's edge/scripts/docker-compose.mcl-sec-guard.yml
+      # and what macula-fleet's edge/scripts/docker-compose.mcl-sec-guard.yml:49
       # sets. Named here rather than left to the release's own fallback, because
       # "the service knows its own port" is the point of this file.
       - MCL_SEC_GUARD_ADMIN_PORT=${MCL_SEC_GUARD_ADMIN_PORT:-8458}

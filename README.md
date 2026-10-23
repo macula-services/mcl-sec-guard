@@ -80,3 +80,13 @@ commands run from the repo directory use the pinned VM via the asdf shims:
     rebar3 compile
     rebar3 eunit
     rebar3 lint
+
+## Architecture
+
+The C4 model is in [architecture/README.md](architecture/README.md), with its
+diagrams drawn by `architecture/c4_diagrams.py` into `assets/`. Change the
+script, run it (`python3 architecture/c4_diagrams.py`), and look at the result
+before committing.
+
+![mcl-sec-guard system context](assets/c4-context.svg)
+

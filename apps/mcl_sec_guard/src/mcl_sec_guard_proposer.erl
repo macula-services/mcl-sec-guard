@@ -4,7 +4,7 @@
 %%% P0 ships a deterministic placeholder rule behind this behaviour;
 %%% the model-backed proposer replaces it when the loop is proven. A
 %%% proposal is DATA ONLY — the P0 guardian applies nothing, and even
-%%% in P1 the apply path is the service's own gated limits.set, never
+%%% in P1 the apply path is the service's own gated set_limits, never
 %%% anything this module returns.
 -module(mcl_sec_guard_proposer).
 

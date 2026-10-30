@@ -21,7 +21,7 @@
 
 info() ->
     #{name => <<"mcl-sec-guard">>,
-      version => <<"0.3.0">>,
+      version => <<"0.4.0">>,
       description => <<"The security guardian, P0 shadow: observes denial facts and records proposals; applies nothing">>}.
 
 start(_Opts) -> mcl_sec_guard_sup:start_link().
@@ -57,8 +57,16 @@ identity_spec() ->
 %% the proposal, and nothing is applied. Reading is not an action, so
 %% this matches identity_spec/0's empty actions: a popped guardian gains
 %% a reader of public denial facts and nothing more.
+%% WHO MAY DELIVER: `members' -- any publisher the realm admitted, which is
+%% what a guarded service publishing its `denials_observed' window is. macula
+%% 18 has no default (macula#147) and mcl_om refuses a declaration that names
+%% none, so the decision is written here. Not `{org, _}`, because nothing in
+%% this mesh presents an org key yet, and not `{open, _}', which would let a
+%% publisher from outside the realm write denial facts a guardian then acts on.
 subscriptions() ->
-    [{alert_topic(), mcl_sec_guard_subscriber, []}].
+    [#{topic => alert_topic(),
+       module => mcl_sec_guard_subscriber,
+       sources => members}].
 
 alert_topic() ->
     application:get_env(mcl_sec_guard, alert_topic, <<"denials_observed">>).

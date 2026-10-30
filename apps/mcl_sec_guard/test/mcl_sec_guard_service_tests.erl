@@ -178,5 +178,7 @@ found(false, _Candidate, Dir, Name, Left) ->
 %% P0: the one authority actually exercised — a read subscription to the
 %% alert topic, nothing else, matching the empty actions/resources above.
 listens_to_the_alert_topic_only_test() ->
-    ?assertEqual([{<<"denials_observed">>, mcl_sec_guard_subscriber, []}],
+    ?assertEqual([#{topic => <<"denials_observed">>,
+                    module => mcl_sec_guard_subscriber,
+                    sources => members}],
                  ?SERVICE:subscriptions()).

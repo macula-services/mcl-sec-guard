@@ -50,8 +50,8 @@ directory; neither reaches another service.
 | `mcl_sec_guard_trainer_view` | pure reader | `read_run_sets/1` `file:consult/1`s the reporter's term files; `scoreboard/1` only formats the list it is handed. It loads no trainer module, which is why the console works with the trainer absent |
 | `mcl_sec_guard_trainer_api` | the run endpoint's other half | `run/1` evaluates the baseline or one genome, one run at a time: a second call in flight returns `run_in_progress`, which the handler maps to 409 |
 | `mcl_sec_trainer` | second OTP application, in the release, off by default | The pure simulator, the eight scenarios, the episode runner and fitness vector, and `mcl_sec_trainer_reporter`. The term files it writes are the only bridge to the console |
-| `mcl_om` | library, `~> 1.4` | `boot/1`: mesh, identity, health, and one supervised subscriber per declared topic |
-| `macula` | library, `~> 16.0` | QUIC transport, the subscriber behaviour, `decode_payload/1`, and the signed DHT records |
+| `mcl_om` | library, `~> 1.6` | `boot/1`: mesh, identity, health, and one supervised subscriber per declared topic |
+| `macula` | library, `~> 18.0` | QUIC transport, the subscriber behaviour, `decode_payload/1`, and the signed DHT records |
 | `jsx, ranch, cowboy` | libraries, `jsx` declared directly | `jsx` encodes the console's JSON; `ranch` and `cowboy` carry the admin listener |
 | the host environment | environment, read at boot | `MCL_SEC_GUARD_ADMIN_PORT`, `MCL_SEC_GUARD_ALERT_TOPIC`, `MCL_SEC_GUARD_PROPOSAL_LOG`, `MCL_SEC_GUARD_TRAINER_RUNS`; `MCL_REALM`, `MCL_REALM_KEY` and the station pins are read by `mcl_om` |
 

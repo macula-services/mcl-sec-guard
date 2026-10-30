@@ -5,9 +5,32 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.4.0 - 2026-10-30
 
-- **The base library is macula 16** (macula-codebase-checks#4): the macula floor moves
+Refs macula-services/mcl-om#42, the migration of the mcl-* services onto
+mcl_om 1.6 and macula 18.
+
+- **On mcl_om 1.6 and macula 18, and the alert subscription now says who may
+  deliver to it.** `mcl_om` moves to `~> 1.6` and `macula` to `~> 18.0`; 18
+  still speaks wire 1.0, so this service still speaks to every wire 1.0 box.
+  What it brings is two refusals at boot, not two defaults
+  (macula-io/macula#147), and this release satisfies both:
+
+  | Rule | Before | Now |
+  | --- | --- | --- |
+  | who may CALL a capability with a handler | unspecified | none advertised: the guardian serves no call, it subscribes |
+  | who may DELIVER to a subscription | unspecified = accepted | required; the alert topic declares `sources => members` |
+
+  `members` is any publisher the realm admitted, which is what a guarded
+  service publishing its own `denials_observed` window is. Not `{org, _}`,
+  because nothing in this mesh presents an org key yet, and not `{open, _}`,
+  which would let a publisher from outside the realm write denial facts a
+  guardian then acts on. A subscription that names no source is refused, naming
+  the topic, before the service starts.
+
+- **The base library is macula 16** (macula-codebase-checks#4), landed in main
+  before this release and shipped by it; the versions below are the ones it
+  landed with, and the entry above supersedes them: the macula floor moves
   `~> 15.6` to `~> 16.0`, and `mcl_om` to `~> 1.4`, the release whose own base is
   macula 16. 16.0 keeps wire 1.0, so this service still speaks to every wire 1.0 box;
   what it adds is the revocation bound (macula#118): an endorsement admits its holder

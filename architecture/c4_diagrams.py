@@ -210,9 +210,9 @@ def components():
           ["The pure simulator, the eight scenarios, the episode runner and fitness vector, and mcl_sec_trainer_reporter:",
            "the term files it writes are the only bridge between the trainer and the console, which never loads it."],
           code=True)
-    d.box("b-mac", 40, 866, 360, 104, "mcl_om", "[library, ~> 1.4]",
+    d.box("b-mac", 40, 866, 360, 104, "mcl_om", "[library, ~> 1.6]",
           ["boot/1 wires mesh, identity, health and one", "subscriber per declared topic"], code=True)
-    d.box("b-mac", 420, 866, 360, 104, "macula", "[library, ~> 16.0]",
+    d.box("b-mac", 420, 866, 360, 104, "macula", "[library, ~> 18.0]",
           ["QUIC transport, subscriber behaviour,", "decode_payload/1, the signed DHT records"],
           code=True)
     d.box("b-mac", 800, 866, 360, 104, "jsx, ranch, cowboy", "[jsx direct; ranch, cowboy via mcl_om]",

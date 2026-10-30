@@ -107,12 +107,12 @@
 <text class="t-desc" x="56" y="824">the term files it writes are the only bridge between the trainer and the console, which never loads it.</text>
 <rect class="b-mac" x="40" y="866" width="360" height="104" rx="10"/>
 <text class="t-code" x="56" y="894">mcl_om</text>
-<text class="t-type" x="56" y="912">[library, ~&gt; 1.4]</text>
+<text class="t-type" x="56" y="912">[library, ~&gt; 1.6]</text>
 <text class="t-desc" x="56" y="936">boot/1 wires mesh, identity, health and one</text>
 <text class="t-desc" x="56" y="952">subscriber per declared topic</text>
 <rect class="b-mac" x="420" y="866" width="360" height="104" rx="10"/>
 <text class="t-code" x="436" y="894">macula</text>
-<text class="t-type" x="436" y="912">[library, ~&gt; 16.0]</text>
+<text class="t-type" x="436" y="912">[library, ~&gt; 18.0]</text>
 <text class="t-desc" x="436" y="936">QUIC transport, subscriber behaviour,</text>
 <text class="t-desc" x="436" y="952">decode_payload/1, the signed DHT records</text>
 <rect class="b-mac" x="800" y="866" width="360" height="104" rx="10"/>
